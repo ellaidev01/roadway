@@ -1,0 +1,164 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
+  font-family: Poppins, sans-serif;
+
+  line-height: 1.5;
+  font-weight: 500;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #dfffe6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.ant-select-selector {
+  @apply border-gray-400 !important;
+}
+
+.ant-btn:hover {
+  color: black !important;
+}
+
+.rectangle {
+  background: var(
+    --1,
+    linear-gradient(89deg, #1c8fd1 -28.34%, #1cd190 104.47%)
+  );
+  /* height: 400px; */
+}
+
+.ant-menu-item-selected {
+  background: linear-gradient(
+    89deg,
+    #1c8fd1 -28.34%,
+    #1cd190 104.47%
+  ) !important;
+}
+
+.ant-menu-item:hover {
+  background: linear-gradient(
+    89deg,
+    #1c8fd17d -28.34%,
+    #1cd18f82 104.47%
+  ) !important;
+  color: black !important;
+}
+
+.ant-menu-item-selected:hover {
+  background: linear-gradient(
+    89deg,
+    #1c8fd1 -28.34%,
+    #1cd190 104.47%
+  ) !important;
+  color: white !important;
+}
+
+.ant-select {
+  @apply md:w-[300px] w-[200px] mx-2 !important;
+}
+
+.ant-menu .ant-menu-sub {
+  background: #c8e9cf !important;
+  color: black !important;
+}
+
+.ant-menu-title-content-selected {
+  color: white !important;
+}
+
+.ant-menu-item-icon{
+  @apply text-xl !important;
+}
+
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #1CC799;
+  border-color: #1CC799;
+}
+
+.color-btn {
+  background: linear-gradient(
+    89deg,
+    #1c8fd1 -28.34%,
+    #1cd190 104.47%
+  ) !important;
+  @apply border-none text-white font-semibold hover:text-white !important;
+}
+
+.menu-bg-color{
+  background: linear-gradient(
+    89deg,
+    #1c8fd1 -28.34%,
+    #1cd190 104.47%
+  ) !important;
+}
+
+.gray-btn {
+  @apply bg-gray-300 text-black border-none font-semibold !important;
+}
+
+.ant-picker {
+  @apply w-[200px] md:w-[100px];
+}
+
+.search-bar .ant-btn {
+  @apply border-white !important;
+}
+.search-bar .ant-input {
+  @apply border-white !important;
+}
+.search-bar .ant-btn-icon {
+  color: white !important;
+}
+.search-bar .ant-btn-icon:hover {
+  color: black !important;
+}
+
+.ant-pagination-item-active {
+  @apply border-cyan-600 bg-cyan-50 !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0; /* Removes the margin */
+}
+
+
+.ant-drawer-content-wrapper{
+  width: 300px !important;
+}
+
+.ant-layout-sider{
+  @apply hidden md:block !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.179); /* Color of the scrollbar thumb */
+}
+
+
+.ant-menu-item-selected {
+  color: white !important;
+}

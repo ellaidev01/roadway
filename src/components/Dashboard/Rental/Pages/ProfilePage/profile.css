@@ -1,0 +1,8 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.ant-select.custom-select {
+  @apply w-[300px] md:w-[230px] mr-2 ml-2 !important;
+}
+

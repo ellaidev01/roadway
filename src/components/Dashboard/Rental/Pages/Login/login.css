@@ -1,0 +1,11 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.ant-select-lg{
+  margin: 0 !important;
+}
+
+.idtype-select .ant-select{
+  @apply w-[200px] md:w-[250px] !important;
+}
