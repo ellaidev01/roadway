@@ -40,8 +40,7 @@ const getUserSlice = createSlice({
     name: "user",
     initialState: {
         loading: false,
-        userType: null as string | null,
-        err: null as string | null,
+        err: null,
         data: null,
     } as userState,
 
@@ -56,8 +55,8 @@ const getUserSlice = createSlice({
             .addCase(getUserByMobileRequest.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload;
-                state.userType = action.payload[0]?.usertype;
                 localStorage.setItem("username", action.payload[0]?.name);
+                localStorage.setItem("user", action.payload[0]?.uniqueid);
             })
             .addCase(getUserByMobileRequest.rejected, (state, action) => {
                 state.err = action.payload as string;

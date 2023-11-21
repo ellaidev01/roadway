@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useGetRefreshTokenMutation } from "./services/configuration/loginApi/refreshTokenApi";
 import {
   cookieToken,
+  getUserType,
   setCookie,
   tokenAuthenticated,
 } from "./constants/constants";
@@ -29,11 +30,14 @@ export interface InputRefreshData {
   refresh_token: string;
 }
 
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() =>
-    tokenAuthenticated(0)
+    tokenAuthenticated(0) // this function always check token when component rerender. at initial render we have to update this state.
   );
-  const isRentalUserLoggedIn = isLoggedIn;
+  const [userType, setUserType] = useState<string | null>(() => getUserType());
+
+  const isRentalUserLoggedIn = isLoggedIn && userType === "Service Provider";
 
   const [
     getTokenMutation,
@@ -62,12 +66,6 @@ function App() {
         client_id: import.meta.env.VITE_CLIENT_ID,
         client_secret: import.meta.env.VITE_CLIENT_SECRET,
       };
-
-      /* 
-      encodeURIComponent(key) is used to ensure that the key is properly encoded for use in a URL. This is necessary in case the key contains characters that are not allowed in URLs.
-      inputData[key as keyof InputData] is used to access the value associated with the current key. The as keyof InputData type assertion.
-      The resulting strings for each key-value pair are then joined together with & using the join("&") method. This is the standard way to format data in x-www-form-urlencoded format, where keys and values are separated by &, and key-value pairs are separated by =.
-      */
 
       const formDataQueryString = Object.keys(inputData)
         .map(
@@ -176,12 +174,22 @@ function App() {
           <Route
             index
             path="/"
-            element={<LoginSignupPage setIsLoggedIn={setIsLoggedIn} />}
+            element={
+              <LoginSignupPage
+                setIsLoggedIn={setIsLoggedIn}
+                setUserType={setUserType}
+              />
+            }
           />
           <Route
             index
             path="/service-user-login"
-            element={<LoginSignupPage setIsLoggedIn={setIsLoggedIn} />}
+            element={
+              <LoginSignupPage
+                setIsLoggedIn={setIsLoggedIn}
+                setUserType={setUserType}
+              />
+            }
           />
           <Route index path="/service-user-signup" element={<SignUpForm />} />
 

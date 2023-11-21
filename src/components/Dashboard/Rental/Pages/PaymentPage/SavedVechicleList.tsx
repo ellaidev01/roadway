@@ -11,15 +11,18 @@ import {
   useGetAddedVehicleQuery,
   useGetVehicleBrandQuery,
 } from "../../../../../services/configuration/serviceApi/serviceApi";
+import { getUser } from "../../../../../constants/constants";
 
 const { Search } = Input;
 
 interface VehicleData {
+  vid:number;
   vregno: string;
   vbrand: string;
   vgps: string;
   vfcdate: string;
   vinsdate: string;
+  vuserid: string;
 }
 
 interface vehicleBrand {
@@ -92,12 +95,13 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
   const { data: vehicleData } = useGetAddedVehicleQuery(undefined);
   const { data: vehiclebrand } = useGetVehicleBrandQuery(undefined);
 
-  // const getLoginUserVehicleData = () =>{
-  //   vehicleData.find(()=>)
-  // }
+  const getLoginUserVehicleData = () => {
+    return vehicleData?.filter(
+      (item: VehicleData) => item.vuserid === getUser()?.toLowerCase()
+    );
+  };
 
   const columns: ColumnsType<VehicleData> = [
-    
     {
       title: "Vehicle Number",
       dataIndex: "vregno",
@@ -109,7 +113,7 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
       dataIndex: "vbrand",
       render: (_, record) => {
         const brandObj = vehiclebrand?.find(
-          (item:vehicleBrand) => item?.brandid ===  parseInt(record?.vbrand)
+          (item: vehicleBrand) => item?.brandid === parseInt(record?.vbrand)
         );
 
         return brandObj?.brandname || ""; // Display the brand name or an empty string
@@ -180,8 +184,8 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
         <div className="table-container overflow-x-auto">
           <Table
             columns={columns}
-            rowKey="Vehicle_Number"
-            dataSource={vehicleData}
+            rowKey="vid"
+            dataSource={getLoginUserVehicleData()}
             pagination={tableParams.pagination}
             scroll={{ x: true }} // Make the table scrollable in x-direction
             onChange={(

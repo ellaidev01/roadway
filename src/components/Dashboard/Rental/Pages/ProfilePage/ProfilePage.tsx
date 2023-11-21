@@ -13,6 +13,7 @@ import {
   useGetStatesDataQuery,
 } from "../../../../../services/configuration/signupApi/signUpApi";
 import { CityData, CountryData, StateData } from "../Login/SignUpForm";
+import { getUser } from "../../../../../constants/constants";
 
 export interface ProfileFormData {
   customer_Id: number;
@@ -53,7 +54,7 @@ export interface URL {
 export interface UserProfileObj {
   uid: number;
   name: string;
-  username: string;
+  uniqueid: string;
   mobile: string;
   address: string;
   city: string;
@@ -104,7 +105,7 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const profile = getLoginUserProfile();
-    profile?.map((user) => {
+    profile?.map((user: UserProfileObj) => {
       const address = user.address.split(",");
 
       form.setFieldsValue({
@@ -120,13 +121,10 @@ const ProfilePage: React.FC = () => {
     });
   }, [edit]);
 
-  const getLoginUserProfile = (): UserProfileObj[] | undefined => {
-    const LoginUserName = localStorage.getItem("username");
-    if (users && LoginUserName) {
-      return users?.filter(
-        (user: UserProfileObj) => user?.name === LoginUserName
-      );
-    }
+  const getLoginUserProfile = () => {
+    return users?.filter(
+      (user: UserProfileObj) => user?.uniqueid === getUser()
+    );
   };
 
   const handleAction = (action: string) => {
@@ -234,10 +232,7 @@ const ProfilePage: React.FC = () => {
                     </p>
                     <div className="flex w-full mx-2 flex-wrap">
                       <div className="flex flex-col">
-                        <label
-                          htmlFor="name"
-                          className="ml-5 text-gray-400"
-                        >
+                        <label htmlFor="name" className="ml-5 text-gray-400">
                           Name
                         </label>
                         <CustomFormItem
@@ -266,10 +261,7 @@ const ProfilePage: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex flex-col">
-                        <label
-                          htmlFor="otp"
-                          className="ml-5 text-gray-400"
-                        >
+                        <label htmlFor="otp" className="ml-5 text-gray-400">
                           OTP
                         </label>
                         <div className="relative mb-2">

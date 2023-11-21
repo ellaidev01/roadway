@@ -58,7 +58,7 @@ export const getCookieExpiration = (cookieName: string) => {
             if (expires_in) {
                 const expirationDateString = new Date(expires_in * 1000);
                 console.log(expirationDateString);
-                
+
                 return expirationDateString;
             } else {
                 // Handle the case where decodedValue or decodedValue.exp is undefined
@@ -83,6 +83,14 @@ export const tokenAuthenticated = (index: number) => {
     return false;
 };
 
+// when component rerenders redux not provide data. so we need to save in local storage to persist. then every rerender we can use this function to get user type.
+export const getUserType = () => {
+    return localStorage.getItem("usertype");
+};
+
+export const getUser = () => {
+    return localStorage.getItem("user");
+};
 
 
 

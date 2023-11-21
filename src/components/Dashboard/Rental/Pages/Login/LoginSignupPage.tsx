@@ -34,18 +34,19 @@ type FormValues = {
 
 interface loginProps {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
+  setUserType: Dispatch<SetStateAction<string | null>>
 }
 
-const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn }) => {
+const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) => {
   const [isLoginClicked, setIsLoginClicked] = useState<boolean>(true);
   const [mobileNo, setMobileNo] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { data } = useSelector<RootStateType, UserReducer>(
+  const { userType } = useSelector<RootStateType, UserReducer>(
     (state) => state.user
   );
 
-  console.log(data);
+  console.log(userType);
   
 
   const navigate = useNavigate();
@@ -64,16 +65,14 @@ const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn }) => {
     try {
       // Retrieve the access token from localStorage
       const token = localStorage.getItem("access_token");
-
-      console.log(token);
-      
-
       // Check if the token exists in localStorage and mobileNo has a valid length
       if (token && mobileNo.length === 10) {
         // Dispatch a login request
         const res = await dispatch(getUserByMobileRequest(mobileNo));
         const username = res?.payload[0].uniqueid;
-
+        localStorage.setItem("usertype", res?.payload[0].usertype);
+        setUserType(res?.payload[0].usertype);
+        
         // Check if necessary fields are present in user data
         if (username && password) {
           const inputData = {
