@@ -26,7 +26,7 @@ interface MyComponentProps {
   isServiceSelected: boolean;
 }
 
-const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
+const UpdateVehicleForm: React.FC<MyComponentProps> = ({ handleSave }) => {
   const [form] = Form.useForm<Vehicle_Data>();
   const [value, setValue] = useState<string>("");
 
@@ -286,4 +286,4 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
   );
 };
 
-export default ServiceForm;
+export default UpdateVehicleForm;

@@ -63,17 +63,13 @@ const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) =>
 
   const login = async () => {
     try {
-      // Retrieve the access token from localStorage
       const token = localStorage.getItem("access_token");
-      // Check if the token exists in localStorage and mobileNo has a valid length
       if (token && mobileNo.length === 10) {
-        // Dispatch a login request
         const res = await dispatch(getUserByMobileRequest(mobileNo));
         const username = res?.payload[0].uniqueid;
         localStorage.setItem("usertype", res?.payload[0].usertype);
         setUserType(res?.payload[0].usertype);
         
-        // Check if necessary fields are present in user data
         if (username && password) {
           const inputData = {
             username: username,
@@ -93,7 +89,6 @@ const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) =>
             )
             .join("&");
 
-          // Call the getTokenMutation function with the query string
           const res = await getTokenMutation(formDataQueryString);
 
           // Check if the response contains the expected data

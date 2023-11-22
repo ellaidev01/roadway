@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PackageCard from "./PackageCard";
 import PaymentSuccessMessage from "./SuccessMessage";
 import ServiceSelection from "./ServiceSelection";
-import ServiceForm from "./ServiceForm";
+import ServiceForm from "./AddVechicleForm";
 import { Button, Divider, Steps } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import PopUp from "../ProfilePage/PopUp";

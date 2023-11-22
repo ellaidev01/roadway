@@ -1,5 +1,5 @@
 import { Form, Input } from "antd";
-import { Vehicle_Data } from "../Pages/PaymentPage/ServiceForm";
+import { Vehicle_Data } from "../Pages/PaymentPage/AddVechicleForm";
 
 interface CustomFormItemProps {
   name: keyof Vehicle_Data;

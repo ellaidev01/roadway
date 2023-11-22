@@ -14,6 +14,7 @@ import {
 // import axios from "axios";
 import vehicle from "../../../../../assets/vehicle.png";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export interface CityData {
   country_code: string;
@@ -218,7 +219,7 @@ const SignUpForm: React.FC = () => {
     if (!isTermsSelected) {
       setTermsError("terms and conditions is not selected");
     } else {
-      await signUpRequest(formData);
+      // await signUpRequest(formData);
       setIsFormSubmitted(true);
 
       // const username = "praveen";
@@ -237,11 +238,28 @@ const SignUpForm: React.FC = () => {
       // // Make the POST request using Axios
       // const response = await axios.post(apiUrl, formData, {headers});
       // console.log(response);
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+
+      const raw = JSON.stringify(formData);
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+      };
+
+      fetch("https://api.teckiko.com/gord/insert", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
     }
   };
 
   const handleOtpChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // in html and js e.target.value property of an input field with type="number" will still be a string. This is because the user can input various characters, not just numbers, and it needs to be parsed into a number explicitly.
+    // in html and js e.target.value property of an input field with type="number" will still be a string. This is because the user can input constious characters, not just numbers, and it needs to be parsed into a number explicitly.
 
     // Get the input value
     let inputValue: string = e.target.value;
@@ -267,9 +285,28 @@ const SignUpForm: React.FC = () => {
       setOtpError("OTP should be of minimum 6 digits");
     }
 
-    // if (otp && otp?.length && otp.length === 6) {
+    if (otp && otp?.length) {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
 
-    // }
+      const raw = JSON.stringify({
+        mobile: mobileNumber,
+        email: signUpFormData?.email,
+        otp: otp,
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+      };
+
+      fetch("https://api.teckiko.com/gord/verifyotp", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
+    }
   };
 
   return (
@@ -306,13 +343,13 @@ const SignUpForm: React.FC = () => {
                 all your vehicle rental needs. We understand the importance of
                 reliable transportation, and we're here to make your journey
                 smoother. Our platform offers a wide range of vehicles to cater
-                to various travel preferences. Whether you're planning a family
-                road trip, a corporate event, or a group excursion, we have the
-                perfect vehicle for you. With RoadWays Info, convenience is at
-                your fingertips. Log in to your account to access our
-                user-friendly interface, where you can browse our extensive
-                catalog of vehicles. We provide detailed descriptions and images
-                to help you make the right choice.
+                to constious travel preferences. Whether you're planning a
+                family road trip, a corporate event, or a group excursion, we
+                have the perfect vehicle for you. With RoadWays Info,
+                convenience is at your fingertips. Log in to your account to
+                access our user-friendly interface, where you can browse our
+                extensive catalog of vehicles. We provide detailed descriptions
+                and images to help you make the right choice.
               </Typography>
             </div>
           </Col>
