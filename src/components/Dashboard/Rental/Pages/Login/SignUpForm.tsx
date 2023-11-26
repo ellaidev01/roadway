@@ -14,7 +14,7 @@ import {
 // import axios from "axios";
 import vehicle from "../../../../../assets/vehicle.png";
 import { Link } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 
 export interface CityData {
   country_code: string;
@@ -376,11 +376,11 @@ const SignUpForm: React.FC = () => {
                   {!showAddressDetails && (
                     <div>
                       <p className="pb-2 pl-3 text-lg">
-                        Profile Details<span className="text-red-500">*</span>
+                        Profile Details<span className="text-red-500">*</span> 
                       </p>
                       <div className="md:flex">
                         <div className="flex flex-col">
-                          <label htmlFor="name" className="ml-3 text-gray-400">
+                          <label htmlFor="name" className="ml-3 text-gray-500">
                             Full Name
                           </label>
                           <CustomSignUpFormItem
@@ -392,7 +392,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="organization_name"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Organization Name
                           </label>
@@ -407,13 +407,13 @@ const SignUpForm: React.FC = () => {
                         <div className="relative">
                           <label
                             htmlFor="mobile"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Mobile Number
                           </label>
                           <Input
                             name="mobile"
-                            className="md:w-[250px] w-[200px] border-gray-400 md:mx-2"
+                            className="md:w-[250px] w-[200px] border-gray-500 md:mx-2"
                             placeholder="Enter mobile no"
                             type="number"
                             required
@@ -429,7 +429,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="email"
-                            className="ml-3 mt-6 md:mt-0 text-gray-400"
+                            className="ml-3 mt-6 md:mt-0 text-gray-500"
                           >
                             Email (optional)
                           </label>
@@ -444,7 +444,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="password"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Password
                           </label>
@@ -457,7 +457,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="confirm_password"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Confirm Password
                           </label>
@@ -472,7 +472,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="idtype"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Id Type
                           </label>
@@ -502,7 +502,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="idnumber"
-                            className="md:ml-5 ml-3 text-gray-400"
+                            className="md:ml-5 ml-3 text-gray-500"
                           >
                             Id Proof Number
                           </label>
@@ -518,7 +518,7 @@ const SignUpForm: React.FC = () => {
                         </div>
                       </div>
                       {/* <div className="flex flex-col">
-              <label htmlFor="idfile" className="md:ml-5 ml-3  text-gray-400">
+              <label htmlFor="idfile" className="md:ml-5 ml-3  text-gray-500">
                 Id File
               </label>
               <div>
@@ -543,7 +543,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="door_no"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Door Number
                           </label>
@@ -556,7 +556,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="street_name"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Street Name
                           </label>
@@ -569,7 +569,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="landmark"
-                            className="ml-3 text-gray-400"
+                            className="ml-3 text-gray-500"
                           >
                             Landmark
                           </label>
@@ -582,7 +582,7 @@ const SignUpForm: React.FC = () => {
                         <div className="flex flex-col">
                           <label
                             htmlFor="country"
-                            className="ml-5 text-gray-400"
+                            className="ml-5 text-gray-500"
                           >
                             Country
                           </label>
@@ -610,7 +610,7 @@ const SignUpForm: React.FC = () => {
                         </div>
 
                         <div className="flex flex-col">
-                          <label htmlFor="state" className="ml-3 text-gray-400">
+                          <label htmlFor="state" className="ml-3 text-gray-500">
                             State
                           </label>
                           <Form.Item
@@ -636,7 +636,7 @@ const SignUpForm: React.FC = () => {
                           </Form.Item>
                         </div>
                         <div className="flex flex-col">
-                          <label htmlFor="city" className="ml-6 text-gray-400">
+                          <label htmlFor="city" className="ml-6 text-gray-500">
                             City
                           </label>
 
@@ -701,13 +701,13 @@ const SignUpForm: React.FC = () => {
                       <div className="flex justify-end">
                         <div>
                           <Input
-                            className="md:w-[250px] w-[120px] border-gray-400 md:mx-2 mr-2"
+                            className="md:w-[250px] w-[120px] border-gray-500 md:mx-2 mr-2"
                             placeholder="Enter OTP"
                             name="otp"
                             value={otp}
                             onChange={handleOtpChange}
                           />
-                          <p className="text-red-400 ml-3">
+                          <p className="text-red-500 ml-3">
                             {otpError && otpError}
                           </p>
                         </div>

@@ -23,14 +23,14 @@ dayjs.extend(customParseFormat); // Use the customParseFormat plugin
 
 interface MyComponentProps {
   handleCancel: () => void;
-  selectedVehicleData: VehicleData | undefined;
   selectedServiceId: number | undefined;
+  selectedVehicleData: VehicleData | undefined;
 }
 
-const UpdateVehicleForm: React.FC<MyComponentProps> = ({
+const UpdateServiceVehicle: React.FC<MyComponentProps> = ({
   handleCancel,
-  selectedVehicleData,
   selectedServiceId,
+  selectedVehicleData,
 }) => {
   const [form] = Form.useForm<VehicleData>();
   const [vehicleFormData, setVehicleFormData] = useState<VehicleData>();
@@ -59,15 +59,16 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
   } = useGetStatesDataQuery("IN");
 
   useEffect(() => {
+    // console.log(selectedVehicleData);
     const item = selectedVehicleData;
 
     if (item) {
+      setVehicleFormData(selectedVehicleData);
       setMobileNumber(String(item?.vmobile));
       setInsStateObj(
-        item?.vinsdate ? dayjs(item.vinsdate, "YYYY-MM-DD") : null
+        item?.vinsdate ? dayjs(item?.vinsdate, "YYYY-MM-DD") : null
       ); // Set dayjs object for insurance date
-      setFcStateObj(item?.vfcdate ? dayjs(item.vfcdate, "YYYY-MM-DD") : null); // Set dayjs object for FC date
-
+      setFcStateObj(item?.vfcdate ? dayjs(item?.vfcdate, "YYYY-MM-DD") : null); // Set dayjs object for FC date
       form.setFieldsValue({
         vregno: item?.vregno,
         vtype: item?.vtype,
@@ -81,9 +82,8 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
         vregstate: item?.vregstate,
         vgps: item?.vgps,
         vinstype: item?.vinstype,
+        visactive:item?.visactive === 1 ? 1 : 0
       });
-
-      setVehicleFormData(selectedVehicleData);
     }
   }, []);
 
@@ -98,6 +98,7 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
       ...prevState,
       ...changedField,
     }));
+    
   };
 
   useEffect(() => {
@@ -140,7 +141,7 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
     const item = selectedVehicleData;
     const payload = {
       ...vehicleFormData,
-      vfcdate: fcDate || item?.vfcdate,
+      vfcdate: fcDate || item?.vfcdate ,
       vinsdate: insDate || item?.vinsdate,
       vuserid: userId,
       vsrvcid: selectedServiceId,
@@ -151,7 +152,7 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
       vimg2: "",
       vimg3: "",
       vvalidity: "2024-11-20", // need to ask doubt
-      visactive: vehicleFormData?.visactive || item?.visactive,
+      visactive: vehicleFormData?.visactive || item?.visactive ,
       vmobile: mobileNumber || item?.vmobile,
       vtons: Number(vehicleFormData?.vtons || item?.vtons),
     };
@@ -496,6 +497,22 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
                   />
                 </div>
               </div>
+              <div className="flex flex-col">
+                <label htmlFor="visactive" className="ml-5 text-gray-500">
+                  Is Vehicle Active<span className="text-red-500">*</span>
+                </label>
+                <Form.Item name="visactive">
+                  <Select
+                    size="large"
+                    placeholder="Select Vehicle Status"
+                    className="custom-select"
+                    showSearch
+                  >
+                    <Select.Option value={1}>Yes</Select.Option>
+                    <Select.Option value={0}>No</Select.Option>
+                  </Select>
+                </Form.Item>
+              </div>
             </div>
           </div>
           <div className="flex space-x-2 mb-3 justify-end mr-20">
@@ -515,4 +532,4 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
   );
 };
 
-export default UpdateVehicleForm;
+export default UpdateServiceVehicle;

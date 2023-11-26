@@ -46,7 +46,7 @@ const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) =>
     (state) => state.user
   );
 
-  console.log(userType);
+  // console.log(userType);
   
 
   const navigate = useNavigate();

@@ -1,29 +1,22 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Input, Table } from "antd";
+import { Button, Checkbox, Input, Skeleton, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import type { FilterValue } from "antd/es/table/interface";
 import {
   LeftCircleOutlined,
   EditOutlined,
-  DeleteOutlined,
+  // DeleteOutlined,
 } from "@ant-design/icons";
 import {
   useGetAddedVehicleQuery,
   useGetVehicleBrandQuery,
 } from "../../../../../services/configuration/serviceApi/serviceApi";
 import { getUser } from "../../../../../constants/constants";
+import { SetStateAction, Dispatch } from "react";
+import { VehicleData } from "./AddVechicleForm";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const { Search } = Input;
-
-interface VehicleData {
-  vid:number;
-  vregno: string;
-  vbrand: string;
-  vgps: string;
-  vfcdate: string;
-  vinsdate: string;
-  vuserid: string;
-}
 
 interface vehicleBrand {
   brandid: number;
@@ -37,21 +30,15 @@ interface TableParams {
   filters?: Record<string, FilterValue | null> | undefined; // Specify the type here
 }
 
-// interface ServiceDataObj {
-//   id: number;
-//   icon?: React.ReactNode;
-//   serviceName: string;
-// }
-
 interface ServiceSelectionProps {
-  handleAddService: () => void | undefined;
-  handleBack: () => void | undefined;
-  // serviceData?: ServiceDataItem[];
-  // selectedService?: ServiceDataItem | null;
+  isAddVehicle: boolean;
+  setIsAddVehicle: Dispatch<SetStateAction<boolean>>;
+  isServiceSelected: boolean;
+  setIsServiceSelected: Dispatch<SetStateAction<boolean>>;
+  selectedServiceId: number | undefined;
+  handleUpdate: (record: VehicleData) => void;
+  handleSelectedVehicleIds: (e: CheckboxChangeEvent, data: VehicleData) => void;
 }
-
-const handleUpdate = () => {};
-const handleRemove = () => {};
 
 // const generateMockData = (count: number): VehicleData[] => {
 //   const mockData: VehicleData[] = [];
@@ -81,26 +68,15 @@ const handleRemove = () => {};
 // ];
 
 const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
-  handleAddService,
-  handleBack,
+  isAddVehicle,
+  setIsAddVehicle,
+  isServiceSelected,
+  setIsServiceSelected,
+  selectedServiceId,
+  handleUpdate,
+  handleSelectedVehicleIds,
 }) => {
   // const [pageData, setPageData] = useState<VehicleData[]>();
-  const [tableParams, setTableParams] = useState<TableParams>({
-    pagination: {
-      current: 1,
-      pageSize: 4,
-    },
-  });
-
-  const { data: vehicleData } = useGetAddedVehicleQuery(undefined);
-  const { data: vehiclebrand } = useGetVehicleBrandQuery(undefined);
-
-  const getLoginUserVehicleData = () => {
-    return vehicleData?.filter(
-      (item: VehicleData) => item.vuserid === getUser()?.toLowerCase()
-    );
-  };
-
   const columns: ColumnsType<VehicleData> = [
     {
       title: "Vehicle Number",
@@ -112,11 +88,11 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
       title: "Vehicle Name",
       dataIndex: "vbrand",
       render: (_, record) => {
-        const brandObj = vehiclebrand?.find(
-          (item: vehicleBrand) => item?.brandid === parseInt(record?.vbrand)
+        const brandObj = vehicleBrand?.find(
+          (item: vehicleBrand) => item?.brandid === record?.vbrand
         );
 
-        return brandObj?.brandname || ""; // Display the brand name or an empty string
+        return brandObj?.brandname || "";
       },
       sorter: true,
       width: "20%",
@@ -144,23 +120,63 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
     {
       title: "Actions",
       dataIndex: "actions",
-      render: () => (
+      render: (_, record) => (
         <span className="flex space-x-6">
-          <button className="text-cyan-600" onClick={() => handleUpdate()}>
+          <button
+            className="text-cyan-600"
+            onClick={() => handleUpdate(record)}
+          >
             <EditOutlined />
           </button>
-          <button className="text-red-600" onClick={() => handleRemove()}>
+          {/* <button className="text-red-600" onClick={() => handleRemove()}>
             <DeleteOutlined />
-          </button>
+          </button> */}
         </span>
       ),
     },
     {
       title: "Select_Service to List_in_Roadways",
       dataIndex: "checkbox",
-      render: () => <Checkbox />,
+      render: (_, record) => (
+        <Checkbox
+          onChange={(e) => {
+            handleSelectedVehicleIds(e, record);
+          }}
+        />
+      ),
     },
   ];
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 4,
+    },
+  });
+
+  const { data: vehicleData, isLoading: isVehicleLoading } =
+    useGetAddedVehicleQuery(undefined);
+  const { data: vehicleBrand } = useGetVehicleBrandQuery(undefined);
+
+  const getLoginUserVehicleData = () => {
+    return vehicleData?.filter(
+      (item: VehicleData) => item?.vuserid === getUser()?.toLowerCase()
+    );
+  };
+
+  const getSelectedServiceData = () => {
+    return getLoginUserVehicleData()?.filter(
+      (item: VehicleData) =>
+        item?.vsrvcid === selectedServiceId && item?.visactive === 0
+    );
+  };
+
+  const handleAddVehicle = () => {
+    setIsAddVehicle(!isAddVehicle);
+  };
+
+  const handleBack = () => {
+    setIsServiceSelected(!isServiceSelected);
+  };
 
   return (
     <>
@@ -171,7 +187,7 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
             className="text-xl md:mx-4 mr-3 text-cyan-600"
           />
           <Button
-            onClick={handleAddService}
+            onClick={handleAddVehicle}
             className="color-btn mt-2 mr-2 md:mr-0 md:mt-0"
           >
             Add Vehicle
@@ -182,28 +198,33 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
       </div>
       <div className="rounded-md md:border mt-2">
         <div className="table-container overflow-x-auto">
-          <Table
-            columns={columns}
-            rowKey="vid"
-            dataSource={getLoginUserVehicleData()}
-            pagination={tableParams.pagination}
-            scroll={{ x: true }} // Make the table scrollable in x-direction
-            onChange={(
-              pagination,
-              filters: Record<string, FilterValue | null>,
-              sorter
-            ) => {
-              setTableParams({
+          {isVehicleLoading ? (
+            // Show Skeleton when loading
+            <Skeleton active />
+          ) : (
+            <Table
+              columns={columns}
+              rowKey="vid"
+              dataSource={getSelectedServiceData()}
+              pagination={tableParams.pagination}
+              scroll={{ x: true }} // Make the table scrollable in x-direction
+              onChange={(
                 pagination,
-                filters,
-                ...sorter,
-              });
+                filters: Record<string, FilterValue | null>,
+                sorter
+              ) => {
+                setTableParams({
+                  pagination,
+                  filters,
+                  ...sorter,
+                });
 
-              // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-              //   setPageData([]);
-              // }
-            }}
-          />
+                // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+                //   setPageData([]);
+                // }
+              }}
+            />
+          )}
         </div>
       </div>
     </>

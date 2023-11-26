@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { cookieToken } from "../../constants/constants";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -7,8 +8,7 @@ export const commonApiConfig = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem("access_token");
-
+      const token = cookieToken(0);
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -17,6 +17,6 @@ export const commonApiConfig = createApi({
     },
   }),
 
-  tagTypes: [],
+  tagTypes: ["GetVehicle", "PostVehicle"],
   endpoints: () => ({}),
 });

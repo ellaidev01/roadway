@@ -9,7 +9,7 @@ export const serviceApi = commonApiConfig.injectEndpoints({
             }),
             // providedTags: [""],
         }),
-        availableSubscription: builder.mutation({
+        activateSubscription: builder.mutation({
             query: (inputData) => ({
                 url: `roadways/rpc/upsert_subsr`,
                 method: "POST",
@@ -17,7 +17,7 @@ export const serviceApi = commonApiConfig.injectEndpoints({
             }),
             // invalidatesTags: [""],
         }),
-        
+
         addServiceCities: builder.mutation({
             query: (inputData) => ({
                 url: `roadways/srvcities`,
@@ -48,11 +48,11 @@ export const serviceApi = commonApiConfig.injectEndpoints({
             // providedTags: [""],
         }),
         getVehicleModel: builder.query({
-            query: () => ({
-                url: `roadways/vmodels?vtypeid=eq.1&vbrandid=eq.1`,
+            query: ({ vtype, vbrand }) => ({
+                url: `roadways/vmodels?vtypeid=eq.${vtype}&vbrandid=eq.${vbrand}`,
                 method: "GET",
             }),
-            // providedTags: [""],
+            providesTags: ["GetVehicle"],
         }),
         addVehicle: builder.mutation({
             query: (inputData) => ({
@@ -60,10 +60,9 @@ export const serviceApi = commonApiConfig.injectEndpoints({
                 method: "POST",
                 body: inputData
             }),
-            // invalidatesTags: [""],
+            invalidatesTags: ["PostVehicle"],
         }),
     }),
-  
 });
 
-export const { useGetServiceTypeQuery, useAvailableSubscriptionMutation, useAddServiceCitiesMutation,useGetAddedVehicleQuery, useAddVehicleMutation, useGetVehicleBrandQuery,useGetVehicleModelQuery, useGetVehicleTypeQuery } = serviceApi;
+export const { useGetServiceTypeQuery, useActivateSubscriptionMutation, useAddServiceCitiesMutation, useGetAddedVehicleQuery, useAddVehicleMutation, useGetVehicleBrandQuery, useGetVehicleModelQuery, useGetVehicleTypeQuery } = serviceApi;

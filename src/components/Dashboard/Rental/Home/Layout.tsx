@@ -48,7 +48,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Vehicle List", "1", <TableOutlined />),
+  getItem("Service Vehicle List", "1", <TableOutlined />),
   getItem("Add Vehicle", "2", <SisternodeOutlined />),
   getItem("Profile", "3", <UserOutlined />),
   getItem("Enquiry", "4", <PhoneOutlined />),
@@ -194,7 +194,7 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
               <TrademarkCircleFilled />
             )}
           </i>
-          <p className="text-lg absolute top-4 md:top-3 ml-8  md:text-xl text-center font-semibold italic">
+          <p className="text-lg hidden md:block absolute top-4 md:top-3 ml-8  md:text-xl text-center font-semibold italic">
             RoadWays Info Services
           </p>
 
@@ -277,7 +277,7 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
               onClick={(e) => {
                 const key = e.key; // when we click on menu item we get key from MenuItem it will be like "1"
                 const item = routeData?.find((item) => item.id === Number(key));
-                console.log(item);
+                // console.log(item);
                 setSelectedMenu(item?.id);
                 if (item) {
                   navigate(item.path);

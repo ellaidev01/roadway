@@ -1,6 +1,6 @@
-import { commonApiConfig } from "../../api/commonApiConfig";
+import { tokenApiSlice } from "../../api/tokenApiConfig";
 
-export const signUpApi = commonApiConfig.injectEndpoints({
+export const signUpApi = tokenApiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserTypeData: builder.query({
       query: () => ({

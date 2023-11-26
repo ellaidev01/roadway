@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import { Button, Form, Input, Select } from "antd";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Button, Form, Input, Select, DatePicker } from "antd";
 import CustomVehicleFormItem from "../../Custom/CustomVehicleFormItem";
-import CustomDatePicker from "../../Custom/CustomVehicleDatePicker";
-import { SetStateAction } from "react";
-import { Dispatch } from "react";
+import { SetStateAction, Dispatch } from "react";
 import "../ServicePage/service.css";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import {
+  useAddVehicleMutation,
   useGetVehicleBrandQuery,
   useGetVehicleModelQuery,
   useGetVehicleTypeQuery,
 } from "../../../../../services/configuration/serviceApi/serviceApi";
 import {
-  useGetCitiesDataQuery,
-  useGetCountriesDataQuery,
+  // useGetCitiesDataQuery,
+  // useGetCountriesDataQuery,
   useGetStatesDataQuery,
 } from "../../../../../services/configuration/signupApi/signUpApi";
-import { CityData, CountryData, StateData } from "../Login/SignUpForm";
+import { StateData } from "../Login/SignUpForm";
+import type { DatePickerProps } from "antd";
+import { getUser } from "../../../../../constants/constants";
 
-export interface Vehicle_Data {
+export interface VehicleData {
   vtype: number;
   vmodel: number;
   vbrand: number;
@@ -39,12 +40,8 @@ export interface Vehicle_Data {
   votherfile: null | string;
   vmobile: number;
   visactive: number;
-}
-
-interface MyComponentProps {
-  handleSave: () => void;
-  setIsServiceSelected: Dispatch<SetStateAction<boolean>>;
-  isServiceSelected: boolean;
+  vuserid: string;
+  vsrvcid: number;
 }
 
 export interface vehicleTypeData {
@@ -64,59 +61,66 @@ export interface vehicleModelData {
   vmname: string;
 }
 
-export interface VehicleLocationData {
-  city: string;
-  state: string;
-  country: string;
+// export interface VehicleLocationData {
+//   city: string;
+//   state: string;
+//   country: string;
+// }
+
+interface FormProps {
+  isFormSubmitted: boolean;
+  setIsFormSubmitted: Dispatch<SetStateAction<boolean>>;
+  selectedServiceId: number | undefined;
+  isAddVehicle: boolean;
+  setIsAddVehicle: Dispatch<SetStateAction<boolean>>;
 }
 
-const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
-  const [form] = Form.useForm<Vehicle_Data>();
-  const [vehicleFormData, setVehicleFormData] = useState<VehicleLocationData>();
+const ServiceForm: React.FC<FormProps> = ({
+  selectedServiceId,
+  isAddVehicle,
+  setIsAddVehicle,
+  isFormSubmitted,
+  setIsFormSubmitted,
+}) => {
+  const [form] = Form.useForm<VehicleData>();
+  const [vehicleFormData, setVehicleFormData] = useState<VehicleData>();
+  const [insDate, setInsState] = useState<string>("");
+  const [fcDate, setFcState] = useState<string>("");
+  const [vtypeId, setVtypeId] = useState<number | null>();
+  const [vBrandId, setBrandId] = useState<number | null>();
   // const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
-    null
-  );
+  // const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
+  //   null
+  // );
 
-  const [selectedStateCode, setSelectedStateCode] = useState<string | null>(
-    null
-  );
+  // const [selectedStateCode, setSelectedStateCode] = useState<string | null>(
+  //   null
+  // );
+  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [mobileError, setMobileError] = useState<string>("");
 
-  const { data: vehicleBrandResData } = useGetVehicleBrandQuery(undefined);
-  const { data: vehicleModelResData } = useGetVehicleModelQuery(undefined);
   const { data: vehicleTypeResData } = useGetVehicleTypeQuery(undefined);
-  const {
-    data: countriesResData,
-    // isLoading: isCitiesLoading,
-    // isError: isCitiesError,
-    // error: isCitiesError,
-  } = useGetCountriesDataQuery(undefined); // undefined means there is no argument supplied for request
+  const { data: vehicleBrandResData } = useGetVehicleBrandQuery(undefined);
+  const { data: vehicleModelResData } = useGetVehicleModelQuery({
+    vtype: vtypeId || 1,
+    vbrand: vBrandId || 1,
+  });
+
+  const [addVehicle] = useAddVehicleMutation();
 
   const {
     data: statesResData,
     // isLoading: isCitiesLoading,
     // isError: isCitiesError,
     // error: isCitiesError,
-  } = useGetStatesDataQuery(selectedCountryCode || "IN");
+  } = useGetStatesDataQuery("IN");
 
-  const {
-    data: citiesResData,
-    // isLoading: isCitiesLoading,
-    // isError: isCitiesError,
-    // error: isCitiesError,
-  } = useGetCitiesDataQuery(selectedStateCode || "TN");
-
-  const handleChangeVehicleForm = (changedField: VehicleLocationData) => {
-    const countryCode = countriesResData?.find(
-      (item: CountryData) => item?.name === changedField?.country
-    );
-
-    const stateCode = statesResData?.find(
-      (item: StateData) => item?.name === changedField?.state
-    );
-
-    setSelectedCountryCode(countryCode?.iso2);
-    setSelectedStateCode(stateCode?.state_code);
+  const handleChangeVehicleForm = (
+    changedField: VehicleData,
+    allValues: VehicleData
+  ) => {
+    setVtypeId(allValues?.vtype);
+    setBrandId(allValues?.vbrand);
 
     setVehicleFormData((prevState) => ({
       ...prevState,
@@ -124,8 +128,72 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Submitted data:", vehicleFormData);
+  useEffect(() => {
+    if (mobileNumber) {
+      setMobileError("");
+    }
+  }, [mobileNumber]);
+
+  const handleMobileNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Get the input value
+    let inputValue: string = e.target.value;
+
+    // Remove non-numeric characters
+    inputValue = inputValue.replace(/[^0-9]/g, "");
+
+    // Ensure the length doesn't exceed 10 characters
+    if (inputValue.length > 10) {
+      // remove the extra characters when type
+      inputValue = inputValue.slice(0, 10); // index , upto
+    }
+
+    // Update the state
+    setMobileNumber(inputValue);
+  };
+  const handleInsDatePickerChange: DatePickerProps["onChange"] = (
+    _,
+    dateString
+  ) => {
+    setInsState(dateString);
+  };
+  const handleFCDatePickerChange: DatePickerProps["onChange"] = (
+    _,
+    dateString
+  ) => {
+    setFcState(dateString);
+  };
+
+  const handleSubmit = async () => {
+    const userId = getUser()?.toLowerCase();    
+    const payload = {
+      ...vehicleFormData,
+      vfcdate: fcDate,
+      vinsdate: insDate,
+      vuserid: userId,
+      vsrvcid: selectedServiceId,
+      vrcfile: null,
+      vinsfile: null,
+      votherfile: null,
+      vimg1: "",
+      vimg2: "",
+      vimg3: "",
+      vvalidity: "2024-11-20", // need to ask
+      visactive: 0,
+      vmobile:mobileNumber,
+      vtons: Number(vehicleFormData?.vtons)
+    };
+    console.log(payload);
+
+    if (selectedServiceId && userId && mobileNumber) {
+      await addVehicle(payload);
+      form.resetFields();
+      setIsAddVehicle(!isAddVehicle);
+      setIsFormSubmitted(!isFormSubmitted);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsAddVehicle(!isAddVehicle);
   };
 
   return (
@@ -140,33 +208,51 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
           <div>
             <div>
               <LeftCircleOutlined
-                onClick={handleSave}
-                className="text-xl md:ml-6 mb-3 text-cyan-600"
-              />{" "}
+                onClick={handleCancel}
+                className="text-xl ml-6 md:ml-6 mb-3 text-cyan-600"
+              />
               <p className="font-semibold text-lg  pb-3 ml-5 md:ml-5  md:m-0">
-                Vehicle Details<span className="text-red-500">*</span>
+                Vehicle Details
               </p>
               <div className="flex w-full mx-2 flex-wrap">
+                <div className="flex flex-col mb-3 ml-3 md:ml-0">
+                  <label htmlFor="vmobile" className="ml-3 text-gray-500">
+                    Vehicle Mobile No<span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    size="large"
+                    name="mobile"
+                    className="md:w-[230px] w-[300px] border-gray-500 md:mx-2"
+                    placeholder="Enter mobile no"
+                    type="number"
+                    required
+                    value={mobileNumber}
+                    onChange={handleMobileNumberChange}
+                    maxLength={10}
+                    pattern="[0-9]*"
+                  />
+                  <p className="text-red-500">{mobileError && mobileError}</p>
+                </div>
                 <div className="flex flex-col">
-                  <label htmlFor="vregno" className="ml-5 text-gray-400">
-                    Vehicle No
+                  <label htmlFor="vregno" className="ml-5 text-gray-500">
+                    Vehicle Reg No<span className="text-red-500">*</span>
                   </label>
                   <CustomVehicleFormItem
-                    placeholder="Enter Vehicle_No"
+                    placeholder="Enter Vehicle Reg No"
                     required
                     name="vregno"
                   />
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="vtype" className="ml-5 text-gray-400">
-                    Vehicle_Type
+                  <label htmlFor="vtype" className="ml-5 text-gray-500">
+                    Vehicle Type<span className="text-red-500">*</span>
                   </label>
-                  <Form.Item>
+                  <Form.Item name="vtype">
                     <Select
                       showSearch
                       size="large"
-                      placeholder="Select Vehicle_Type"
+                      placeholder="Select Vehicle Type"
                       className="custom-select"
                     >
                       {vehicleTypeResData?.map((item: vehicleTypeData) => (
@@ -178,10 +264,10 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                   </Form.Item>
                 </div>
                 <div className="flex flex-col">
-                  <label htmlFor="vbrand" className="ml-5 text-gray-400">
-                    Brand Name
+                  <label htmlFor="vbrand" className="ml-5 text-gray-500">
+                    Brand Name<span className="text-red-500">*</span>
                   </label>
-                  <Form.Item>
+                  <Form.Item name="vbrand">
                     <Select
                       size="large"
                       placeholder="Select Brand Name"
@@ -198,10 +284,10 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="vmodel" className="ml-5 text-gray-400">
-                    Vehicle Model
+                  <label htmlFor="vmodel" className="ml-5 text-gray-500">
+                    Vehicle Model<span className="text-red-500">*</span>
                   </label>
-                  <Form.Item>
+                  <Form.Item name="vmodel">
                     <Select
                       size="large"
                       placeholder="Select Vehicle Model"
@@ -218,20 +304,10 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                 </div>
 
                 <div className="flex flex-col">
-                  <label htmlFor="vtons" className="ml-5 text-gray-400">
-                    Vehicle_Capacity {"(Tons)"}
+                  <label htmlFor="vusetype" className="ml-5 text-gray-500">
+                    Vehicle User Type<span className="text-red-500">*</span>
                   </label>
-                  <CustomVehicleFormItem
-                    name="vtons"
-                    placeholder="Enter Vehicle_Capacity"
-                    required
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label htmlFor="vusetype" className="ml-5 text-gray-400">
-                    Vehicle_User_Type
-                  </label>
-                  <Form.Item>
+                  <Form.Item name="vusetype">
                     <Select
                       size="large"
                       placeholder="Select Vehicle_User_Type"
@@ -239,27 +315,111 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                       showSearch
                     >
                       <Select.Option value="Passenger">Passenger</Select.Option>
+                      <Select.Option value="Commercial">
+                        Commercial
+                      </Select.Option>
                     </Select>
                   </Form.Item>
                 </div>
                 <div className="flex flex-col">
-                  <label htmlFor="vregno" className="ml-5 text-gray-400">
-                    Vehicle Seats Count
+                  <label htmlFor="vregno" className="ml-5 text-gray-500">
+                    Vehicle Seats Count<span className="text-red-500">*</span>
                   </label>
                   <CustomVehicleFormItem
-                    placeholder="Enter Vehicle_No"
+                    placeholder="Enter Seats Count"
                     required
-                    name="vregno"
+                    name="vseats"
+                  />
+                </div>
+                {vehicleFormData?.vusetype === "Commercial" && (
+                  <div className="flex flex-col">
+                    <label htmlFor="vtons" className="ml-5 text-gray-500">
+                      Vehicle Capacity {"(Tons)"}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <CustomVehicleFormItem
+                      name="vtons"
+                      placeholder="Enter Vehicle_Capacity"
+                      required
+                    />
+                  </div>
+                )}
+                <div className="flex flex-col">
+                  <label htmlFor="vfuel" className="ml-5 text-gray-500">
+                    Vehicle Fuel Type<span className="text-red-500">*</span>
+                  </label>
+                  <Form.Item name="vfuel">
+                    <Select
+                      size="large"
+                      placeholder="Select Vehicle Fuel"
+                      className="custom-select"
+                      showSearch
+                    >
+                      <Select.Option value="Diesel">Diesel</Select.Option>
+                      <Select.Option value="Petrol">Petrol</Select.Option>
+                      <Select.Option value="Gas">Gas</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </div>
+                <div className="flex flex-col">
+                  <label htmlFor="vtyres" className="ml-5 text-gray-500">
+                    Vehicle Total Tyres<span className="text-red-500">*</span>
+                  </label>
+                  <CustomVehicleFormItem
+                    name="vtyres"
+                    placeholder="Enter Vehicle_Total_Tyres"
+                    required
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label htmlFor="votherfile" className="ml-5 text-gray-400">
-                    Vehicle Image
+                  <label htmlFor="vregstate" className="ml-3 text-gray-500">
+                    Vehicle Register State
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <Form.Item name="vregstate">
+                    <Select
+                      size="large"
+                      placeholder="Select Vehicle Register State"
+                      className="custom-select"
+                      showSearch
+                    >
+                      {statesResData?.map((item: StateData) => (
+                        <Select.Option key={item?.id} value={item?.id}>
+                          {item?.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </div>
+
+                <div className="flex flex-col ml-2 md:ml-0">
+                  <label htmlFor="votherfile" className="ml-5 text-gray-500">
+                    Vehicle Image1<span className="text-red-500">*</span>
                   </label>
                   <Input
                     type="file"
                     size="large"
-                    className="w-[250px] md:ml-4 mb-6"
+                    className="w-[300px] md:w-[250px] md:ml-2 mb-6"
+                  />
+                </div>
+                <div className="flex flex-col ml-2 md:ml-0">
+                  <label htmlFor="votherfile" className="ml-5 text-gray-500">
+                    Vehicle Image2 (optional)
+                  </label>
+                  <Input
+                    type="file"
+                    size="large"
+                    className="w-[300px] md:w-[250px] md:ml-2 mb-6"
+                  />
+                </div>
+                <div className="flex flex-col ml-2 md:ml-0">
+                  <label htmlFor="votherfile" className="ml-5 text-gray-500">
+                    Vehicle Image3 (optional)
+                  </label>
+                  <Input
+                    type="file"
+                    size="large"
+                    className="w-[300px] md:w-[250px] md:ml-4 mb-6"
                   />
                 </div>
               </div>
@@ -267,52 +427,59 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
           </div>
           <div>
             <p className="font-semibold text-lg  pb-3 ml-5 md:ml-5 md:m-0">
-              Additional Details<span className="text-red-500">*</span>
+              Additional Details
             </p>
 
             <div className="flex mx-2 flex-wrap">
               <div className="flex flex-col">
-                <label htmlFor="vinstype" className="ml-5 text-gray-400">
-                  Insurance_Type
+                <label htmlFor="vinstype" className="ml-5 text-gray-500">
+                  Insurance Type<span className="text-red-500">*</span>
                 </label>
-                <Form.Item>
+                <Form.Item name="vinstype">
                   <Select
                     size="large"
                     placeholder="Select Insurance_Type"
                     className="custom-select"
                     showSearch
                   >
-                    <Select.Option value="demo">Car Insurance</Select.Option>
-                    <Select.Option value="demo">Bike Insurance</Select.Option>
-                    <Select.Option value="demo">
+                    <Select.Option value="Passenger Vehicle Insurance">
+                      Passenger Vehicle Insurance
+                    </Select.Option>
+                    <Select.Option value="Commercial Vehicle Insurance">
                       Commercial Vehicle Insurance
                     </Select.Option>
                   </Select>
                 </Form.Item>
               </div>
               <div className="flex flex-col">
-                <label htmlFor="vinsdate" className="ml-5 text-gray-400">
-                  Insurance_Validity_Till
+                <label htmlFor="vinsdate" className="ml-5 text-gray-500">
+                  Insurance Validity Till<span className="text-red-500">*</span>
                 </label>
-                <CustomDatePicker placeholder="Select Insurance_Valid_Till" />
+                <DatePicker
+                  size="large"
+                  onChange={handleInsDatePickerChange}
+                  placeholder="Select Insurance Valid Till"
+                />
               </div>
-              <div className="flex flex-col">
-                <label htmlFor="vfcdate" className="ml-5 text-gray-400">
-                  Next_FC_Date
+              <div className="flex flex-col my-3 md:my-0">
+                <label htmlFor="vfcdate" className="ml-5 text-gray-500">
+                  Next FC Date<span className="text-red-500">*</span>
                 </label>
-                <CustomDatePicker
-                  placeholder="Select Next_FC_Date"
+                <DatePicker
+                  size="large"
+                  onChange={handleFCDatePickerChange}
+                  placeholder="Select Next FC Date"
                   className="mr-2"
                 />
               </div>
               <div className="flex flex-col">
-                <label htmlFor="vgps" className="ml-5 text-gray-400">
-                  Is_GPS_Enabled
+                <label htmlFor="vgps" className="ml-5 text-gray-500">
+                  Is GPS Enabled (optional)
                 </label>
-                <Form.Item>
+                <Form.Item name="vgps">
                   <Select
                     size="large"
-                    placeholder="Select is_GPS_Enabled"
+                    placeholder="Select Is GPS Enabled"
                     className="custom-select"
                   >
                     <Select.Option value="Yes">Yes</Select.Option>
@@ -320,7 +487,7 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                   </Select>
                 </Form.Item>
               </div>
-              {/* {vehicleFormData.vgps === "Yes" && (
+              {/* {vehicleFormData?.vgps === "Yes" && (
                 <div className="flex flex-col">
                   <label
                     htmlFor="vehicle_number"
@@ -336,30 +503,32 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
               )} */}
             </div>
             <div className="md:flex md:ml-2">
-              <div className="flex flex-col">
-                <label htmlFor="vrcfile" className="ml-5 text-gray-400">
-                  RC File
+              <div className="flex flex-col md:ml-0 ml-2">
+                <label htmlFor="vrcfile" className="ml-5 text-gray-500">
+                  RC File<span className="text-red-500">*</span>
                 </label>
                 <Input
                   name="vrcfile"
                   type="file"
                   size="large"
-                  className="w-[250px] ml-2 mb-6"
+                  className="w-[300px] md:w-[250px] ml-2 mb-6"
                 />
               </div>
-              <div className="flex flex-col">
-                <label htmlFor="vinsfile" className="ml-5 text-gray-400">
-                  Insurance File
-                </label>
-                <Input
-                  name="vinsfile"
-                  type="file"
-                  size="large"
-                  className="w-[250px] md:ml-4 mb-6"
-                />
+              <div className="md:flex md:ml-0 ml-4">
+                <div className="flex flex-col">
+                  <label htmlFor="vinsfile" className="ml-5 text-gray-500">
+                    Insurance File<span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    name="vinsfile"
+                    type="file"
+                    size="large"
+                    className="w-[300px] md:w-[250px] md:ml-4 mb-6"
+                  />
+                </div>
               </div>
             </div>
-            <div>
+            {/* <div>
               <p className="font-semibold text-lg  pb-3 ml-5 md:ml-5 md:m-0">
                 Location Details<span className="text-red-500">*</span>
               </p>
@@ -440,14 +609,14 @@ const ServiceForm: React.FC<MyComponentProps> = ({ handleSave }) => {
                   </Form.Item>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex space-x-2 mb-3 justify-end mr-20">
-            <Button onClick={handleSave} className="gray-btn font-semibold">
+            <Button onClick={handleCancel} className="gray-btn font-semibold">
               Cancel
             </Button>
             <Button
-              onClick={handleSave}
+              htmlType="submit"
               className="color-btn text-white font-semibold"
             >
               Save

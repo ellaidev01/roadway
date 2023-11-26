@@ -9,3 +9,11 @@
 .ant-picker{
     @apply w-[300px] md:w-[200px] mx-2 !important;
 }
+/* {!isSelected && (
+  <div>
+    <ServiceCategory
+      serviceData={serviceTypeResData}
+      handleServiceSelection={handleClickService}
+    />
+  </div>
+)} */

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, } from "antd";
+import { Button, Card } from "antd";
 
 interface PackageCardProps {
   item: {
@@ -11,19 +11,25 @@ interface PackageCardProps {
     price?: number | undefined;
     btnName: string;
   };
-  
+
   handleSelectPackage?: (packageName: string) => void | undefined;
+  selectedVechicleIds: number[];
+  handleSubscription: () => void
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({
   item,
   handleSelectPackage,
+  selectedVechicleIds,
+  handleSubscription
 }) => {
 
+  console.log(selectedVechicleIds);
+  
   return (
     <div>
       <Card
-        className="border-2 md:mt-10 mt-4  border-cyan-100 flex flex-col justify-between mb-3 text-center mx-2 w-[270px] md:w-[250px] h-[245px] font-semibold bg-green-50"
+        className="border-2 md:mt-10 mt-4  border-cyan-100 flex flex-col justify-between mb-3 text-center mx-2 w-[270px] md:w-[250px] h-[185px] font-semibold bg-green-50"
         key={item?.id}
       >
         <div className="flex flex-col justify-between  h-full">
@@ -35,15 +41,18 @@ const PackageCard: React.FC<PackageCardProps> = ({
             <div className="card-content mb-4">
               {/* <p>{item?.content1}</p> */}
               {/* <p>{item?.content2}</p> */}
-              <p className="font-bold  text-cyan-700">{item?.content3}</p>
-              <p className="font-bold  text-cyan-700">Rs: {item?.price}{item?.heading ==="One month Subscription" ? "/month":"/year" }</p>
+              {/* <p className="font-bold  text-cyan-700">{item?.content2}</p> */}
+              {/* <p className="font-bold  text-cyan-700">Rs: {item?.price}{item?.heading ==="One month Subscription" ? "/month":"/year" }</p> */}
             </div>
           </div>
 
           <div className="card-footer absolute bottom-0 left-0 right-0 p-4">
             <Button
               className="mt-10 text-white border-none flex justify-center items-center w-full font-semibold color-btn"
-              onClick={() => handleSelectPackage?.(item.heading)}
+              onClick={() => {
+                handleSelectPackage?.(item.heading)
+                handleSubscription();
+              }}
             >
               {item.btnName}
             </Button>

@@ -14,6 +14,7 @@ import {
 } from "../../../../../services/configuration/signupApi/signUpApi";
 import { CityData, CountryData, StateData } from "../Login/SignUpForm";
 import { getUser } from "../../../../../constants/constants";
+import { Skeleton } from "antd";
 
 export interface ProfileFormData {
   customer_Id: number;
@@ -72,7 +73,7 @@ const ProfilePage: React.FC = () => {
   const [edit, setEdit] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState({});
   const [addresses, setAddresses] = useState<string[]>([]);
-  const [urls, setURLs] = useState<string[]>([]);
+  // const [urls, setURLs] = useState<string[]>([]);
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     null
   );
@@ -80,7 +81,12 @@ const ProfilePage: React.FC = () => {
     null
   );
 
-  const { data: users } = useGetUsersQuery(undefined);
+  const {
+    data: users,
+    isLoading: isUserLoading,
+    // isError: isUserError,
+    // error: userError,
+  } = useGetUsersQuery(undefined);
 
   const {
     data: countriesResData,
@@ -146,13 +152,13 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleAddAddress = () => {
-    setAddresses([...addresses, ""]);
-  };
+  // const handleAddAddress = () => {
+  //   setAddresses([...addresses, ""]);
+  // };
 
-  const handleUrl = () => {
-    setURLs([...urls, ""]);
-  };
+  // const handleUrl = () => {
+  //   setURLs([...urls, ""]);
+  // };
 
   const handleChangeProfileForm = (changedField: any) => {
     const countryCode = countriesResData?.find(
@@ -192,17 +198,17 @@ const ProfilePage: React.FC = () => {
     setAddresses(updatedAddresses);
   };
 
-  const handleRemoveURL = (index: number) => {
-    const updatedURLs = [...urls];
-    updatedURLs.splice(index, 1);
-    setURLs(updatedURLs);
-  };
+  // const handleRemoveURL = (index: number) => {
+  //   const updatedURLs = [...urls];
+  //   updatedURLs.splice(index, 1);
+  //   setURLs(updatedURLs);
+  // };
 
   return (
     <>
       <div className="overflow-hidden">
         {save && <PopUp />}
-        {!edit && (
+        {!edit && !isUserLoading && (
           <div>
             <ProfileCard
               handleEdit={handleEdit}
@@ -210,6 +216,7 @@ const ProfilePage: React.FC = () => {
             />
           </div>
         )}
+        {!edit && isUserLoading && <Skeleton paragraph={{ rows: 7 }} />}
 
         {edit && (
           <Form
@@ -232,7 +239,7 @@ const ProfilePage: React.FC = () => {
                     </p>
                     <div className="flex w-full mx-2 flex-wrap">
                       <div className="flex flex-col">
-                        <label htmlFor="name" className="ml-5 text-gray-400">
+                        <label htmlFor="name" className="ml-5 text-gray-500">
                           Name
                         </label>
                         <CustomFormItem
@@ -245,7 +252,7 @@ const ProfilePage: React.FC = () => {
                       <div className="flex flex-col">
                         <label
                           htmlFor="idnumber"
-                          className="ml-5 text-gray-400"
+                          className="ml-5 text-gray-500"
                         >
                           Aadhaar No
                         </label>
@@ -260,21 +267,6 @@ const ProfilePage: React.FC = () => {
                           </a>
                         </div>
                       </div>
-                      <div className="flex flex-col">
-                        <label htmlFor="otp" className="ml-5 text-gray-400">
-                          OTP
-                        </label>
-                        <div className="relative mb-2">
-                          <CustomFormItem
-                            name="otp"
-                            placeholder="Enter OTP"
-                            required
-                          />
-                          <a className="absolute top-11 left-3  w-full cursor-pointer">
-                            ReSend OTP
-                          </a>
-                        </div>
-                      </div>
                     </div>
                   </div>
                   <div className="md:mt-5 ">
@@ -284,7 +276,7 @@ const ProfilePage: React.FC = () => {
 
                     <div className="flex w-full mx-2 flex-wrap">
                       <div className="flex flex-col">
-                        <label htmlFor="door_No" className="ml-5 text-gray-400">
+                        <label htmlFor="door_No" className="ml-5 text-gray-500">
                           Door No/Shop No
                         </label>
                         <CustomFormItem
@@ -296,7 +288,7 @@ const ProfilePage: React.FC = () => {
                       <div className="flex flex-col">
                         <label
                           htmlFor="streetName"
-                          className="ml-5 text-gray-400"
+                          className="ml-5 text-gray-500"
                         >
                           StreetName
                         </label>
@@ -309,7 +301,7 @@ const ProfilePage: React.FC = () => {
                       <div className="flex flex-col">
                         <label
                           htmlFor="landmark"
-                          className="ml-5 text-gray-400"
+                          className="ml-5 text-gray-500"
                         >
                           Landmark
                         </label>
@@ -320,7 +312,7 @@ const ProfilePage: React.FC = () => {
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label htmlFor="country" className="ml-5 text-gray-400">
+                        <label htmlFor="country" className="ml-5 text-gray-500">
                           Country
                         </label>
                         <Form.Item
@@ -349,7 +341,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                     <div className="ml-4 md:ml-1 md:flex">
                       <div className="flex flex-col">
-                        <label htmlFor="state" className="ml-5 text-gray-400">
+                        <label htmlFor="state" className="ml-5 text-gray-500">
                           State
                         </label>
                         <Form.Item
@@ -376,7 +368,7 @@ const ProfilePage: React.FC = () => {
                         </Form.Item>
                       </div>
                       <div className="flex flex-col">
-                        <label htmlFor="city" className="ml-5 text-gray-400">
+                        <label htmlFor="city" className="ml-5 text-gray-500">
                           City
                         </label>
                         <Form.Item
@@ -403,6 +395,34 @@ const ProfilePage: React.FC = () => {
                         </Form.Item>
                       </div>
                     </div>
+                    <div>
+                      <p className="font-semibold text-lg  pb-6 ml-5 md:ml-5 mt-5 md:m-0">
+                        Links
+                      </p>
+                      <div className="flex">
+                        <div className="flex flex-col ml-2">
+                          <label htmlFor="city" className="ml-5 text-gray-500">
+                            Social Media URL
+                          </label>
+                          <CustomFormItem
+                            name="social_media_URL"
+                            placeholder="Enter Social Media URL"
+                            required
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label htmlFor="city" className="ml-5 text-gray-500">
+                            Website URL
+                          </label>
+                          <CustomFormItem
+                            name="website_or_URL"
+                            placeholder="Enter Website URL"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     {/* <CustomFormItem
                         name="pincode"
                         placeholder="Pincode"
@@ -463,12 +483,12 @@ const ProfilePage: React.FC = () => {
                       ))}
                     </div>
                     <div>
-                      {urls.map((url, index) => (
-                        <>
+                      {/* {urls.map((url, index) => (
+                        <div key={index}>
                           <p className="font-semibold text-lg  pb-6 ml-5 md:ml-5 mt-5 md:m-0">
                             Links
                           </p>
-                          <div key={index} className="flex flex-wrap ml-2">
+                          <div className="flex flex-wrap ml-2">
                             <CustomFormItem
                               name="social_media_URL"
                               placeholder="Social media URL"
@@ -488,18 +508,18 @@ const ProfilePage: React.FC = () => {
                               Remove
                             </Button>
                           </div>
-                        </>
-                      ))}
+                        </div>
+                      ))} */}
                     </div>
-                    <Button
+                    {/* <Button
                       className="color-btn ml-5"
                       onClick={handleAddAddress}
                     >
                       Add New Address
-                    </Button>
-                    <Button className="color-btn ml-2" onClick={handleUrl}>
+                    </Button> */}
+                    {/* <Button className="color-btn ml-2" onClick={handleUrl}>
                       Add URL
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </div>

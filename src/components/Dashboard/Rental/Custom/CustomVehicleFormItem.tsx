@@ -15,7 +15,7 @@ const CustomVehicleFormItem: React.FC<CustomFormItemProps> = ({
   required = false,
   //   email = false,
 }) => {
-  const rules = [{ required, message: `Please enter your ${placeholder}` }];
+  const rules = [{ required, message: `Please ${placeholder}` }];
   //   if (email) {
   //     rules.push({
   //       pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,

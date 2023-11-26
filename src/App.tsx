@@ -98,7 +98,7 @@ function App() {
   const getRefreshToken = async () => {
     try {
       const storedRefreshToken = cookieToken(1);
-
+      
       if (storedRefreshToken === null) {
         console.error("Refresh token not found");
         return;
