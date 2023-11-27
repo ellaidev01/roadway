@@ -1,13 +1,10 @@
 import { Input, Skeleton } from "antd";
 import { getIcon } from "../../../../../helpers/utilities/icons";
 import { Dispatch, SetStateAction } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import LazyLoadImage from "../../Custom/LazyLoadImage";
 
 const { Search } = Input;
-// export interface ServiceDataItem {
-//   id: number;
-//   icon?: React.ReactNode;
-//   serviceName: string;
-// }
 
 export interface ServiceDataItem {
   mid: number;
@@ -70,11 +67,15 @@ const ServiceCategory: React.FC<ServiceSelectionProps> = ({
             ) : (
               <>
                 <div className="w-[120px] h-[50px] flex flex-col justify-center items-center">
-                  <img
-                    src={getIcon(index)}
-                    className="w-[40px]"
-                    alt={`Vehicle ${index + 1}`}
-                  />
+                <ErrorBoundary fallback={<div>Error loading component!</div>}>
+                    <LazyLoadImage>
+                      <img
+                        src={getIcon(index)}
+                        className="w-[40px]"
+                        alt={`Vehicle ${index + 1}`}
+                      />
+                    </LazyLoadImage>
+                  </ErrorBoundary>
                 </div>
                 <div className="w-[120px] h-[50px] flex flex-col justify-center items-center">
                   <p className="text-center text-gray-600">{item?.value}</p>

@@ -1,6 +1,9 @@
 import { Input, Skeleton } from "antd";
 import { getIcon } from "../../../../../helpers/utilities/icons";
 import { Dispatch, SetStateAction } from "react";
+import React from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import LazyLoadImage from "../../Custom/LazyLoadImage.tsx"
 
 const { Search } = Input;
 // export interface ServiceDataItem {
@@ -31,7 +34,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
   selectedService,
   isServiceTypeLoading,
   searchTerm,
-  setSearchTerm
+  setSearchTerm,
 }) => {
   const onServiceItemClick = (item: ServiceDataItem) => {
     if (handleServiceSelection) {
@@ -40,7 +43,7 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
   };
   return (
     <>
-       <div className="flex justify-center">
+      <div className="flex justify-center">
         <Search
           placeholder="Search here..."
           className="md:w-[300px] w-[190px] mb-3"
@@ -66,16 +69,20 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
           >
             {isServiceTypeLoading ? (
               <div className="w-[120px] h-[100px] flex flex-col justify-center items-center">
-                <Skeleton paragraph={{ rows: 2 }}/>
+                <Skeleton paragraph={{ rows: 2 }} />
               </div>
             ) : (
               <>
                 <div className="w-[120px] h-[50px] flex flex-col justify-center items-center">
-                  <img
-                    src={getIcon(index)}
-                    className="w-[40px]"
-                    alt={`Vehicle ${index + 1}`}
-                  />
+                  <ErrorBoundary fallback={<div>Error loading component!</div>}>
+                    <LazyLoadImage>
+                      <img
+                        src={getIcon(index)}
+                        className="w-[40px]"
+                        alt={`Vehicle ${index + 1}`}
+                      />
+                    </LazyLoadImage>
+                  </ErrorBoundary>
                 </div>
                 <div className="w-[120px] h-[50px] flex flex-col justify-center items-center">
                   <p className="text-center text-gray-600">{item?.value}</p>

@@ -154,9 +154,10 @@ function App() {
     getEntryToken();
   }, []);
 
+
   useEffect(() => {
     if (isLoggedIn) {
-      getRefreshToken();
+      // getRefreshToken();
       const fiveMinutes = 5 * 60 * 1000;
       const interval = setInterval(() => {
         getRefreshToken();

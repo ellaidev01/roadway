@@ -154,6 +154,8 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
       navigate("/service-user-login");
       clearTokenCookie();
       setIsLoggedIn(tokenAuthenticated(0));
+      localStorage.removeItem("user");
+      localStorage.removeItem("username");
     })
   };
 
