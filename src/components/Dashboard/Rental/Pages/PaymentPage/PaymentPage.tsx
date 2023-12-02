@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PackageCard from "./PackageCard";
-import PaymentSuccessMessage from "./SuccessMessage";
+// import PaymentSuccessMessage from "./SuccessMessage";
 import ServiceSelection, { ServiceDataItem } from "./ServiceSelection";
 import ServiceForm, { VehicleData } from "./AddVechicleForm";
-import { Button, Divider, Steps } from "antd";
+import { Button, Divider, Steps, notification } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
-import PopUp from "../ProfilePage/PopUp";
+// import PopUp from "../ProfilePage/PopUp";
 import SavedVechicleList from "./SavedVechicleList";
 import {
   useActivateSubscriptionMutation,
@@ -74,7 +74,8 @@ const PaymentPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ServiceDataItem>();
 
-  const { data: serviceTypeResData, isLoading: isServiceTypeLoading } = useGetServiceTypeQuery(undefined);
+  const { data: serviceTypeResData, isLoading: isServiceTypeLoading } =
+    useGetServiceTypeQuery(undefined);
   const [activateSubscription] = useActivateSubscriptionMutation();
 
   const handleServiceSelection = (item: ServiceDataObj) => {
@@ -128,8 +129,15 @@ const PaymentPage: React.FC = () => {
       // Using forEach to iterate through inputData array
       inputData.forEach(async (data) => {
         try {
-          await activateSubscription(data);
-          console.log("Subscription activated successfully:", data);
+          if (data !== null) {
+            // const res = await activateSubscription(data);
+            // if ("data" in res) {
+            notification.success({
+              message: "Success",
+              description: "Service Activated Successfully",
+            });
+            // }
+          }
         } catch (apiError) {
           console.error("Error activating subscription:", apiError);
         }
@@ -154,11 +162,10 @@ const PaymentPage: React.FC = () => {
         item?.value.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setSearchResult(searchResult);
-    } else{
+    } else {
       setSearchResult(serviceTypeResData);
     }
   }, [searchTerm]);
-
 
   // console.log(selectedService?.mid);
 
@@ -178,24 +185,28 @@ const PaymentPage: React.FC = () => {
           </div>
         )}
 
-        {isServiceSelected && !isAddVehicle && !isVehicleItemSelected && !isUpdate &&(
-          <>
-            <SavedVechicleList
-              isAddVehicle={isAddVehicle}
-              setIsAddVehicle={setIsAddVehicle}
-              isServiceSelected={isServiceSelected}
-              setIsServiceSelected={setIsServiceSelected}
-              selectedServiceId={selectedService?.mid}
-              handleSelectedVehicleIds={handleSelectedVehicleIds}
-              handleUpdate={handleUpdate}
-            />
-            <div className="flex justify-end mt-2">
-              <Button onClick={handleItemSelected} className="color-btn ">
-                Next
-              </Button>
-            </div>
-          </>
-        )}
+        {isServiceSelected &&
+          !isAddVehicle &&
+          !isVehicleItemSelected &&
+          !isUpdate && (
+            <>
+              <SavedVechicleList
+                isAddVehicle={isAddVehicle}
+                setIsAddVehicle={setIsAddVehicle}
+                isServiceSelected={isServiceSelected}
+                setIsServiceSelected={setIsServiceSelected}
+                selectedServiceId={selectedService?.mid}
+                handleSelectedVehicleIds={handleSelectedVehicleIds}
+                handleUpdate={handleUpdate}
+                isFormSubmitted={isFormSubmitted}
+              />
+              <div className="flex justify-end mt-2">
+                <Button onClick={handleItemSelected} className="color-btn ">
+                  Next
+                </Button>
+              </div>
+            </>
+          )}
 
         {isServiceSelected && isAddVehicle && (
           <ServiceForm
@@ -213,7 +224,7 @@ const PaymentPage: React.FC = () => {
             selectedVehicleData={selectedVehicleData as VehicleData}
           />
         )}
-        {isFormSubmitted && <PopUp />}
+
         {!isServiceSelected && false && isFormSubmitted && (
           <div>
             <Divider />
@@ -266,7 +277,7 @@ const PaymentPage: React.FC = () => {
               />
             ))}
         </div>
-        {isPackageSelected && (
+        {isServiceSelected && isVehicleItemSelected && isPackageSelected && (
           <div>
             <div className="hidden md:block">
               <Steps
@@ -280,7 +291,6 @@ const PaymentPage: React.FC = () => {
                   {
                     title: "In Progress",
                     description: "Package Selection",
-                    // subTitle: "Left 00:00:08",
                   },
                   {
                     title: "Completed",
@@ -288,10 +298,25 @@ const PaymentPage: React.FC = () => {
                   },
                 ]}
               />
+              <div className="flex justify-center">
+                <Button
+                  onClick={() => {
+                    setIsServiceSelected(false);
+                    setIsPackageSelected(false);
+                    setIsVehicleItemSelected(false);
+                    setSelectedVehicleIds([]);
+                  }}
+                  className="mt-4 color-btn"
+                >
+                  Go to Service List Page
+                </Button>
+              </div>
             </div>
-            <div className="flex justify-center items-center">
-              <PaymentSuccessMessage />
-            </div>
+            {/* <div className="flex justify-center items-center">
+              <PaymentSuccessMessage
+                setIsServiceSelected={setIsServiceSelected}
+              />
+            </div> */}
           </div>
         )}
       </div>

@@ -55,8 +55,12 @@ const getUserSlice = createSlice({
             .addCase(getUserByMobileRequest.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload;
-                localStorage.setItem("username", action.payload[0]?.name);
-                localStorage.setItem("user", action.payload[0]?.uniqueid);
+                const userType = action?.payload[0]?.usertype;
+
+                if (userType === "Service Provider") {
+                    localStorage.setItem("username", action.payload[0]?.name);
+                    localStorage.setItem("user", action.payload[0]?.uniqueid);
+                }
             })
             .addCase(getUserByMobileRequest.rejected, (state, action) => {
                 state.err = action.payload as string;

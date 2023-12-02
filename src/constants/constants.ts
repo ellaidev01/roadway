@@ -92,5 +92,14 @@ export const getUser = () => {
     return localStorage.getItem("user");
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const objectToQueryString = (obj:any) => {
+    return Object.keys(obj)
+        .map(
+            (key) =>
+                `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`
+        )
+        .join("&");
+}
 
 

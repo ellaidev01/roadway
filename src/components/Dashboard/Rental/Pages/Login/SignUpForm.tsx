@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, Form, Input, Select } from "antd";
+import { Button, Checkbox, Divider, Form, Input, Select, notification } from "antd";
 import { Col, Row, Typography } from "antd";
 import CustomSignUpFormItem, {
   SignUpInputData,
@@ -67,7 +67,7 @@ export interface CountryData {
   tld: string;
 }
 
-const SignUpForm: React.FC = () => {
+const SignUpForm = () => {
   const [showAddressDetails, setShowAddressDetails] = useState(false);
   const [mobileNumber, setMobileNumber] = useState<string>("");
   const [mobileError, setMobileError] = useState<string>("");
@@ -218,9 +218,17 @@ const SignUpForm: React.FC = () => {
 
     if (!isTermsSelected) {
       setTermsError("terms and conditions is not selected");
+      notification.success({
+        message: "Error",
+        description:"terms and conditions is not selected!"
+      });
     } else {
       // await signUpRequest(formData);
       setIsFormSubmitted(true);
+      notification.success({
+        message: "Success",
+        description:"Your details submitted successfully!"
+      });
 
       // const username = "praveen";
       // const password = "kumar@123";
@@ -239,22 +247,23 @@ const SignUpForm: React.FC = () => {
       // const response = await axios.post(apiUrl, formData, {headers});
       // console.log(response);
 
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+    //   const myHeaders = new Headers();
+    //   myHeaders.append("Content-Type", "application/json");
+    //   myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
 
-      const raw = JSON.stringify(formData);
+    //   const raw = JSON.stringify(formData);
 
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-      };
+    //   const requestOptions = {
+    //     method: "POST",
+    //     headers: myHeaders,
+    //     body: raw,
+    //   };
 
-      fetch("https://api.teckiko.com/gord/insert", requestOptions)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.log("error", error));
+    //   fetch("https://api.teckiko.com/gord/insert", requestOptions)
+    //     .then((response) => response.text())
+    //     .then((result) => console.log(result))
+    //     .catch((error) => console.log("error", error));
+    // }
     }
   };
 

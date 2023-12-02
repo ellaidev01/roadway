@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Button, Form, Input, Select, DatePicker } from "antd";
+import { Button, Form, Input, Select, DatePicker, notification } from "antd";
 import CustomVehicleFormItem from "../../Custom/CustomVehicleFormItem";
 import { SetStateAction, Dispatch } from "react";
 import "../ServicePage/service.css";
@@ -79,7 +79,6 @@ const ServiceForm: React.FC<FormProps> = ({
   selectedServiceId,
   isAddVehicle,
   setIsAddVehicle,
-  isFormSubmitted,
   setIsFormSubmitted,
 }) => {
   const [form] = Form.useForm<VehicleData>();
@@ -188,7 +187,11 @@ const ServiceForm: React.FC<FormProps> = ({
       await addVehicle(payload);
       form.resetFields();
       setIsAddVehicle(!isAddVehicle);
-      setIsFormSubmitted(!isFormSubmitted);
+      setIsFormSubmitted(true);
+      notification.success({
+        message: "Success",
+        description:"Vehicle details submitted successfully!"
+      });
     }
   };
 

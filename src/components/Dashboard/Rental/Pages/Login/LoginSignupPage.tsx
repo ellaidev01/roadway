@@ -3,20 +3,24 @@ import "../../../../../index.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./login.css";
-import { Col, Row, Typography } from "antd";
+import { Col, Row, Typography, notification } from "antd";
 import vehicle from "../../../../../assets/vehicle.png";
 import LoginForm from "./LoginForm";
 import { useGetTokenMutation } from "../../../../../services/configuration/loginApi/getTokenApi";
 import {
+  objectToQueryString,
   setCookie,
   tokenAuthenticated,
 } from "../../../../../constants/constants";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  UserReducer,
+  useDispatch,
+  //  useSelector
+} from "react-redux";
+import {
+  // UserReducer,
   getUserByMobileRequest,
 } from "../../../../../store/reducer/userSlice";
-import { RootStateType } from "../../../../../store/store";
+// import { RootStateType } from "../../../../../store/store";
 import { Dispatch, SetStateAction } from "react";
 
 interface InputData {
@@ -34,20 +38,22 @@ type FormValues = {
 
 interface loginProps {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
-  setUserType: Dispatch<SetStateAction<string | null>>
+  setUserType: Dispatch<SetStateAction<string | null>>;
 }
 
-const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) => {
+const LoginSignupPage: React.FC<loginProps> = ({
+  setIsLoggedIn,
+  setUserType,
+}) => {
   const [isLoginClicked, setIsLoginClicked] = useState<boolean>(true);
   const [mobileNo, setMobileNo] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const { userType } = useSelector<RootStateType, UserReducer>(
-    (state) => state.user
-  );
+  // const { userType } = useSelector<RootStateType, UserReducer>(
+  //   (state) => state.user
+  // );
 
   // console.log(userType);
-  
 
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
@@ -66,61 +72,70 @@ const LoginSignupPage: React.FC<loginProps> = ({ setIsLoggedIn,setUserType }) =>
       const token = localStorage.getItem("access_token");
       if (token && mobileNo.length === 10) {
         const res = await dispatch(getUserByMobileRequest(mobileNo));
-        const username = res?.payload[0].uniqueid;
-        localStorage.setItem("usertype", res?.payload[0].usertype);
-        setUserType(res?.payload[0].usertype);
-        
-        if (username && password) {
-          const inputData = {
-            username: username,
-            password: password,
-            grant_type: import.meta.env.VITE_GRANT_TYPE,
-            client_id: import.meta.env.VITE_CLIENT_ID,
-            client_secret: import.meta.env.VITE_CLIENT_SECRET,
-          };
+        const username = res?.payload[0]?.uniqueid;
+        const userType = res?.payload[0]?.usertype;
 
-          // Create a query string from the input data
-          const formDataQueryString = Object.keys(inputData)
-            .map(
-              (key) =>
-                `${encodeURIComponent(key)}=${encodeURIComponent(
-                  inputData[key as keyof InputData]
-                )}`
-            )
-            .join("&");
+        if (userType === "Service Provider") {
+          localStorage.setItem("usertype", userType);
+          setUserType(userType);
+          if (username && password) {
+            const inputData: InputData = {
+              username: username,
+              password: password,
+              grant_type: import.meta.env.VITE_GRANT_TYPE,
+              client_id: import.meta.env.VITE_CLIENT_ID,
+              client_secret: import.meta.env.VITE_CLIENT_SECRET,
+            };
 
-          const res = await getTokenMutation(formDataQueryString);
+            // Create a query string from the input data
+            const formDataQueryString = objectToQueryString(inputData);
+            const res = await getTokenMutation(formDataQueryString);
 
-          // Check if the response contains the expected data
-          if (
-            "data" in res &&
-            "access_token" in res.data &&
-            "refresh_token" in res.data
-          ) {
-            const access_token = res.data.access_token;
-            const expires_in = res.data.expires_in;
-            const refresh_expires_in = res.data.refresh_expires_in;
-            const refresh_token = res.data.refresh_token;
+            // Check if the response contains the expected data
+            if (
+              "data" in res &&
+              "access_token" in res.data &&
+              "refresh_token" in res.data
+            ) {
+              const access_token = res.data.access_token;
+              const expires_in = res.data.expires_in;
+              const refresh_expires_in = res.data.refresh_expires_in;
+              const refresh_token = res.data.refresh_token;
 
-            setCookie(
-              import.meta.env.VITE_RENTAL_ACCESS_TOKEN_NAME,
-              access_token,
-              expires_in
-            );
-            setCookie(
-              import.meta.env.VITE_RENTAL_REFRESH_TOKEN_NAME,
-              refresh_token,
-              refresh_expires_in
-            );
-            setIsLoggedIn(tokenAuthenticated(0));
-            navigate("/service-list");
-          } else {
-            console.error("Unexpected response format:", res);
+              setCookie(
+                import.meta.env.VITE_RENTAL_ACCESS_TOKEN_NAME,
+                access_token,
+                expires_in
+              );
+              setCookie(
+                import.meta.env.VITE_RENTAL_REFRESH_TOKEN_NAME,
+                refresh_token,
+                refresh_expires_in
+              );
+              setIsLoggedIn(tokenAuthenticated(0));
+              navigate("/service-list");
+            } else {
+              notification.error({
+                message: "Login Failed",
+                description:
+                  "The username or password you entered is incorrect. Please double-check your credentials and try again.",
+              });
+            }
           }
+        } else {
+          notification.error({
+            message: "Login Failed",
+            description:
+              "The username or password you entered is incorrect. Please double-check your credentials and try again.",
+          });
         }
       }
     } catch (err) {
-      console.error("Error fetching token:", err);
+      notification.error({
+        message: "Login Failed",
+        description:
+          "The username or password you entered is incorrect. Please double-check your credentials and try again.",
+      });
     }
   };
 

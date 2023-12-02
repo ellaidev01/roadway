@@ -9,11 +9,13 @@ import { useGetRefreshTokenMutation } from "./services/configuration/loginApi/re
 import {
   cookieToken,
   getUserType,
+  objectToQueryString,
   setCookie,
   tokenAuthenticated,
 } from "./constants/constants";
 import SignUpForm from "./components/Dashboard/Rental/Pages/Login/SignUpForm";
 import { setAuthorizationHeader } from "./store/reducer/userSlice";
+import { notification } from "antd";
 
 export interface InputData {
   username: string;
@@ -30,10 +32,9 @@ export interface InputRefreshData {
   refresh_token: string;
 }
 
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() =>
-    tokenAuthenticated(0) // this function always check token when component rerender. at initial render we have to update this state.
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    () => tokenAuthenticated(0) // this function always check token when component rerender. at initial render we have to update this state.
   );
   const [userType, setUserType] = useState<string | null>(() => getUserType());
 
@@ -67,15 +68,7 @@ function App() {
         client_secret: import.meta.env.VITE_CLIENT_SECRET,
       };
 
-      const formDataQueryString = Object.keys(inputData)
-        .map(
-          (key) =>
-            `${encodeURIComponent(key)}=${encodeURIComponent(
-              inputData[key as keyof InputData]
-            )}`
-        )
-        .join("&");
-
+      const formDataQueryString = objectToQueryString(inputData);
       const res = await getTokenMutation(formDataQueryString);
 
       if (
@@ -89,18 +82,26 @@ function App() {
         localStorage.setItem("access_token", accessToken);
       } else {
         console.error("Unexpected response format:", res);
+        notification.error({
+          message: "Authentication Failed",
+        });
       }
     } catch (err) {
       console.error("Error fetching token:", err);
+      notification.error({
+        message: "Authentication Failed",
+      });
     }
   };
 
   const getRefreshToken = async () => {
     try {
       const storedRefreshToken = cookieToken(1);
-      
+
       if (storedRefreshToken === null) {
-        console.error("Refresh token not found");
+        notification.error({
+          message: "Refresh token not found",
+        });
         return;
       }
 
@@ -111,15 +112,7 @@ function App() {
         refresh_token: storedRefreshToken,
       };
 
-      const formDataQueryString = Object.keys(inputData)
-        .map((key) => {
-          const value = inputData[key as keyof InputRefreshData];
-          // Provide a default value (empty string) if the value is null
-          const encodedValue = value !== null ? encodeURIComponent(value) : "";
-          return `${encodeURIComponent(key)}=${encodedValue}`;
-        })
-        .join("&");
-
+      const formDataQueryString = objectToQueryString(inputData);
       const res = await getRefreshTokenMutation(formDataQueryString);
 
       if (
@@ -143,17 +136,20 @@ function App() {
           refresh_expires_in
         );
       } else {
-        console.error("Unexpected response format:", res);
+        notification.error({
+          message: "Refresh Token Error",
+        });
       }
     } catch (err) {
-      console.error("Error fetching token:", err);
+      notification.error({
+        message: "Authentication Failed",
+      });
     }
   };
 
   useEffect(() => {
     getEntryToken();
   }, []);
-
 
   useEffect(() => {
     if (isLoggedIn) {

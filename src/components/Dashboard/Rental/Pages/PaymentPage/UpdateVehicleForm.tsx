@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Button, DatePicker, DatePickerProps, Form, Input, Select } from "antd";
+import { Button, DatePicker, DatePickerProps, Form, Input, Select, notification } from "antd";
 import CustomVehicleFormItem from "../../Custom/CustomVehicleFormItem";
 import "../ServicePage/service.css";
 import { LeftCircleOutlined } from "@ant-design/icons";
@@ -158,8 +158,11 @@ const UpdateVehicleForm: React.FC<MyComponentProps> = ({
     console.log(payload);
 
     if (selectedServiceId && userId && mobileNumber) {
-      // form.resetFields();
-      // handleCancel();
+      handleCancel();
+      notification.success({
+        message: "Success",
+        description:"Vehicle details updated successfully!"
+      });
     }
   };
 

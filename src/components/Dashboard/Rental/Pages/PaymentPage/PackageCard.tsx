@@ -39,7 +39,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
             </p>
 
             <div className="card-content mb-4">
-              {/* <p>{item?.content1}</p> */}
+              <p>Total Vehicles Selected: {selectedVechicleIds?.length}</p>
               {/* <p>{item?.content2}</p> */}
               {/* <p className="font-bold  text-cyan-700">{item?.content2}</p> */}
               {/* <p className="font-bold  text-cyan-700">Rs: {item?.price}{item?.heading ==="One month Subscription" ? "/month":"/year" }</p> */}

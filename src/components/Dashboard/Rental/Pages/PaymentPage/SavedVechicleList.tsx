@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Input, Skeleton, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import type { FilterValue } from "antd/es/table/interface";
@@ -31,6 +31,7 @@ interface TableParams {
 }
 
 interface ServiceSelectionProps {
+  isFormSubmitted: boolean;
   isAddVehicle: boolean;
   setIsAddVehicle: Dispatch<SetStateAction<boolean>>;
   isServiceSelected: boolean;
@@ -75,6 +76,7 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
   selectedServiceId,
   handleUpdate,
   handleSelectedVehicleIds,
+  isFormSubmitted,
 }) => {
   // const [pageData, setPageData] = useState<VehicleData[]>();
   const columns: ColumnsType<VehicleData> = [
@@ -153,8 +155,11 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
     },
   });
 
-  const { data: vehicleData, isLoading: isVehicleLoading } =
-    useGetAddedVehicleQuery(undefined);
+  const {
+    data: vehicleData,
+    isLoading: isVehicleLoading,
+    refetch,
+  } = useGetAddedVehicleQuery(undefined);
   const { data: vehicleBrand } = useGetVehicleBrandQuery(undefined);
 
   const getLoginUserVehicleData = () => {
@@ -177,6 +182,12 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
   const handleBack = () => {
     setIsServiceSelected(!isServiceSelected);
   };
+
+  useEffect(() => {
+    if (isFormSubmitted) {
+      refetch();
+    }
+  }, [isFormSubmitted]);
 
   return (
     <>

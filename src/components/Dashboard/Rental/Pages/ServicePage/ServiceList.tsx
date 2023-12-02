@@ -76,11 +76,21 @@ const SavedVechicleList = () => {
     },
   });
 
-  const { data: vehicleResData, isLoading: isVehicleLoading } =
-    useGetAddedVehicleQuery(undefined);
-  const { data: vehicleResBrand } = useGetVehicleBrandQuery(undefined);
-  const { data: serviceTypeResData, isLoading: isServiceTypeLoading } =
-    useGetServiceTypeQuery(undefined);
+  const {
+    data: vehicleResData,
+    isLoading: isVehicleLoading,
+    isError: isVehicleError,
+  } = useGetAddedVehicleQuery(undefined);
+  const {
+    data: vehicleResBrand,
+    isLoading: isVehicleBrandLoading,
+    isError: isVehicleBrandError,
+  } = useGetVehicleBrandQuery(undefined);
+  const {
+    data: serviceTypeResData,
+    isLoading: isServiceTypeLoading,
+    isError: isServiceTypeError,
+  } = useGetServiceTypeQuery(undefined);
 
   const columns: ColumnsType<VehicleData> = [
     {
@@ -127,7 +137,7 @@ const SavedVechicleList = () => {
       dataIndex: "visactive",
       render: (_, record) => {
         return record.visactive === 1 ? (
-          <p className="bg-lime-50 border rounded-md border-lime-400 text-center text-lime-600">
+          <p className="bg-cyan-50 border rounded-sm border-cyan-400 text-center text-cyan-600">
             YES
           </p>
         ) : (
@@ -194,13 +204,17 @@ const SavedVechicleList = () => {
         item?.value.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setSearchResult(searchResult);
-    } else{
+    } else {
       setSearchResult(serviceTypeResData);
     }
   }, [searchTerm]);
 
   return (
     <>
+      {isVehicleError && <div> Error Fetching Vehicle Data</div>}
+      {isVehicleBrandError && <div> Error Fetching Vehicle Brand</div>}
+      {isServiceTypeError && <div> Error Fetching ServiceType</div>}
+
       {!isServiceSelected && !isUpdate && (
         <div>
           <ServiceCategory
@@ -228,7 +242,9 @@ const SavedVechicleList = () => {
           </div>
           <div className="rounded-md md:border mt-2">
             <div className="table-container overflow-x-auto">
-              {isVehicleLoading ? (
+              {isVehicleLoading ||
+              isVehicleBrandLoading ||
+              isServiceTypeLoading ? (
                 // Show Skeleton when loading
                 <Skeleton active />
               ) : (

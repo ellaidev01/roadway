@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Button, Form, Select } from "antd";
+import { Button, Form, Select, notification } from "antd";
 import CustomFormItem from "../../Custom/CustomProfileFormItem";
 import ProfileCard from "./ProfileCard";
-import PopUp from "./PopUp";
+// import PopUp from "./PopUp";
 import "./profile.css";
 import { useGetUsersQuery } from "../../../../../services/configuration/loginApi/getUsersApi";
 import { LeftCircleOutlined } from "@ant-design/icons";
@@ -67,9 +67,8 @@ export interface UserProfileObj {
 }
 
 const ProfilePage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [form] = Form.useForm<ProfileFormData>();
-  const [save, setSave] = useState(false);
   const [edit, setEdit] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState({});
   const [addresses, setAddresses] = useState<string[]>([]);
@@ -84,28 +83,28 @@ const ProfilePage: React.FC = () => {
   const {
     data: users,
     isLoading: isUserLoading,
-    // isError: isUserError,
+    isError: isUserError,
     // error: userError,
   } = useGetUsersQuery(undefined);
 
   const {
     data: countriesResData,
-    // isLoading: isCitiesLoading,
-    // isError: isCitiesError,
+    isLoading: isCountriesLoading,
+    isError: isCountriesError,
     // error: isCitiesError,
   } = useGetCountriesDataQuery(undefined); // undefined means there is no argument supplied for request
 
   const {
     data: statesResData,
-    // isLoading: isCitiesLoading,
-    // isError: isCitiesError,
-    // error: isCitiesError,
+    isLoading: isStatesLoading,
+    isError: isStatesError,
+    // error: statesError,
   } = useGetStatesDataQuery(selectedCountryCode || "IN"); // undefined means there is no argument supplied for request
 
   const {
     data: citiesResData,
-    // isLoading: isCitiesLoading,
-    // isError: isCitiesError,
+    isLoading: isCitiesLoading,
+    isError: isCitiesError,
     // error: isCitiesError,
   } = useGetCitiesDataQuery(selectedStateCode || "TN"); // undefined means there is no argument supplied for request
 
@@ -128,29 +127,34 @@ const ProfilePage: React.FC = () => {
   }, [edit]);
 
   const getLoginUserProfile = () => {
+    if (isUserError) {
+      notification.error({
+        message: "Error Fetching User",
+      });
+    }
     return users?.filter(
       (user: UserProfileObj) => user?.uniqueid === getUser()
     );
   };
 
-  const handleAction = (action: string) => {
-    switch (action) {
-      case "cancel":
-        // Handle cancel action
-        break;
-      case "back":
-        setCurrentPage(currentPage - 1);
-        break;
-      case "next":
-        setCurrentPage(currentPage + 1);
-        break;
-      case "save":
-        // Handle save action with formData
-        break;
-      default:
-        break;
-    }
-  };
+  // const handleAction = (action: string) => {
+  //   switch (action) {
+  //     case "cancel":
+  //       // Handle cancel action
+  //       break;
+  //     case "back":
+  //       setCurrentPage(currentPage - 1);
+  //       break;
+  //     case "next":
+  //       setCurrentPage(currentPage + 1);
+  //       break;
+  //     case "save":
+  //       // Handle save action with formData
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   // const handleAddAddress = () => {
   //   setAddresses([...addresses, ""]);
@@ -181,15 +185,19 @@ const ProfilePage: React.FC = () => {
   const handleSubmit = (values: ProfileFormData) => {
     console.log("Submitted data:", values);
     setInitialFormValues(values);
+    notification.success({
+      message: "Success",
+      description: "Profile Details Submitted Successfully",
+    });
+    setEdit(false);
   };
 
-  const handleSave = () => {
-    setSave(!save);
-    setEdit(!edit);
+  const handleBack = () => {
+    setEdit(false);
   };
 
   const handleEdit = () => {
-    setEdit(!edit);
+    setEdit(true);
   };
 
   const handleRemoveAddress = (index: number) => {
@@ -206,16 +214,28 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
+      {isCountriesError && (
+        <div className="text-sm text-red-500">Error Fetching Countries</div>
+      )}
+      {isStatesError && (
+        <div className="text-sm text-red-500">Error Fetching States</div>
+      )}
+      {isCitiesError && (
+        <div className="text-sm text-red-500">Error Fetching Cities</div>
+      )}
       <div className="overflow-hidden">
-        {save && <PopUp />}
-        {!edit && !isUserLoading && (
-          <div>
-            <ProfileCard
-              handleEdit={handleEdit}
-              userProfile={getLoginUserProfile()}
-            />
-          </div>
-        )}
+        {!edit &&
+          !isUserLoading &&
+          !isCitiesLoading &&
+          !isCountriesLoading &&
+          !isStatesLoading && (
+            <div>
+              <ProfileCard
+                handleEdit={handleEdit}
+                userProfile={getLoginUserProfile()}
+              />
+            </div>
+          )}
         {!edit && isUserLoading && <Skeleton paragraph={{ rows: 7 }} />}
 
         {edit && (
@@ -226,12 +246,12 @@ const ProfilePage: React.FC = () => {
             onFinish={handleSubmit}
             initialValues={initialFormValues}
           >
-            {currentPage === 1 && (
+            {/* {currentPage === 1 && ( */}
               <div className="flex">
                 <div>
                   <div>
                     <LeftCircleOutlined
-                      onClick={handleSave}
+                      onClick={handleBack}
                       className="text-xl ml-6 text-cyan-600 cursor-pointer pb-3"
                     />
                     <p className="font-semibold text-lg pb-6  md:ml-5  ml-5 md:m-0">
@@ -523,21 +543,23 @@ const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
+            {/* )} */}
 
             <div className="flex justify-end mr-12 space-x-2 md:mr-20 mt-5">
               <Button
-                onClick={() => handleAction("cancel")}
+                onClick={handleBack}
                 className="gray-btn"
               >
                 Cancel
               </Button>
 
-              {currentPage < 2 && (
-                <Button className="color-btn" onClick={handleSave}>
-                  Save
-                </Button>
-              )}
+              {/* {currentPage < 2 && ( */}
+                <Form.Item>
+                  <Button htmlType="submit" className="color-btn">
+                    Save
+                  </Button>
+                </Form.Item>
+              {/* )} */}
               {/* {currentPage > 1 && (
                 <Button
                   onClick={() => handleAction("back")}

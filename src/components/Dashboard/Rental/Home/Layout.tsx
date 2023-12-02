@@ -21,6 +21,7 @@ import ServiceList from "../Pages/ServicePage/ServiceList";
 import {
   clearTokenCookie,
   cookieToken,
+  objectToQueryString,
   tokenAuthenticated,
 } from "../../../../constants/constants";
 import { Dispatch, SetStateAction } from "react";
@@ -94,7 +95,7 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
   const [selectedMenuId, setSelectedmenuId] = useState<number>();
   const [selectedMenu, setSelectedMenu] = useState<number>();
 
-  const [ logout ] = useLogoutMutation();
+  const [logout] = useLogoutMutation();
 
   const isSmallScreen = window.innerWidth < 768;
 
@@ -128,12 +129,10 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
   };
 
   const { Header, Sider, Content } = Layout;
-  // const { Search } = Input;
 
   const navigate = useNavigate();
 
-  const handleLogout = async() => {
- 
+  const handleLogout = async () => {
     const storedRefreshToken = cookieToken(1);
 
     const inputData: InputLogoutData = {
@@ -141,22 +140,16 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
       client_secret: import.meta.env.VITE_CLIENT_SECRET,
       refresh_token: storedRefreshToken,
     };
-    const formDataQueryString = Object.keys(inputData)
-    .map((key) => {
-      const value = inputData[key as keyof InputLogoutData];
-      // Provide a default value (empty string) if the value is null
-      const encodedValue = value !== null ? encodeURIComponent(value) : '';
-      return `${encodeURIComponent(key)}=${encodedValue}`;
-    })
-    .join("&");
-    
-    await logout(formDataQueryString).then(()=>{
+
+    const formDataQueryString = objectToQueryString(inputData);
+
+    await logout(formDataQueryString).then(() => {
       navigate("/service-user-login");
       clearTokenCookie();
       setIsLoggedIn(tokenAuthenticated(0));
       localStorage.removeItem("user");
       localStorage.removeItem("username");
-    })
+    });
   };
 
   const handleNavigate = (id: number) => {
@@ -165,6 +158,7 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
       navigate(item.path);
     }
     setOpen(false);
+    setSelectedMenu(id);
     setSelectedmenuId(id);
   };
 
