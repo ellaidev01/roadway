@@ -20,12 +20,12 @@ import UpdateServiceVehicle from "./UpdateVehicleForm";
 
 const { Search } = Input;
 
-interface vehicleBrand {
+export type vehicleBrand = {
   brandid: number;
   brandname: string;
 }
 
-interface TableParams {
+export type TableParams = {
   pagination?: TablePaginationConfig;
   sortField?: string;
   sortOrder?: string;

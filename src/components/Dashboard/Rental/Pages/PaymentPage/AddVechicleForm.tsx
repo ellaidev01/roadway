@@ -19,7 +19,7 @@ import { StateData } from "../Login/SignUpForm";
 import type { DatePickerProps } from "antd";
 import { getUser } from "../../../../../constants/constants";
 
-export interface VehicleData {
+export type VehicleData = {
   vtype: number;
   vmodel: number;
   vbrand: number;
@@ -42,38 +42,38 @@ export interface VehicleData {
   visactive: number;
   vuserid: string;
   vsrvcid: number;
-}
+};
 
-export interface vehicleTypeData {
+export type vehicleTypeData = {
   vtypeid: number;
   vtype: string;
-}
+};
 
-export interface vehicleBrandData {
+export type vehicleBrandData = {
   brandid: number;
   brandname: string;
-}
+};
 
-export interface vehicleModelData {
+export type vehicleModelData = {
   vmid: number;
   vtypeid: number;
   vbrandid: number;
   vmname: string;
-}
+};
 
-// export interface VehicleLocationData {
+// export type VehicleLocationData = {
 //   city: string;
 //   state: string;
 //   country: string;
 // }
 
-interface FormProps {
+type FormProps = {
   isFormSubmitted: boolean;
   setIsFormSubmitted: Dispatch<SetStateAction<boolean>>;
   selectedServiceId: number | undefined;
   isAddVehicle: boolean;
   setIsAddVehicle: Dispatch<SetStateAction<boolean>>;
-}
+};
 
 const ServiceForm: React.FC<FormProps> = ({
   selectedServiceId,
@@ -163,7 +163,14 @@ const ServiceForm: React.FC<FormProps> = ({
   };
 
   const handleSubmit = async () => {
-    const userId = getUser()?.toLowerCase();    
+    const userId = getUser()?.toLowerCase();
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, "0"); // padStart is used to add 0 at starting of string when string contain single number.
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based, 0 - jan
+    const year = now.getFullYear() + 1;
+
+    const formattedDate = `${year}-${month}-${day}`;
+
     const payload = {
       ...vehicleFormData,
       vfcdate: fcDate,
@@ -176,10 +183,10 @@ const ServiceForm: React.FC<FormProps> = ({
       vimg1: "",
       vimg2: "",
       vimg3: "",
-      vvalidity: "2024-11-20", // need to ask
+      vvalidity: formattedDate, // need to ask
       visactive: 0,
-      vmobile:mobileNumber,
-      vtons: Number(vehicleFormData?.vtons)
+      vmobile: mobileNumber,
+      vtons: Number(vehicleFormData?.vtons) || 0,
     };
     console.log(payload);
 
@@ -190,7 +197,7 @@ const ServiceForm: React.FC<FormProps> = ({
       setIsFormSubmitted(true);
       notification.success({
         message: "Success",
-        description:"Vehicle details submitted successfully!"
+        description: "Vehicle details submitted successfully!",
       });
     }
   };

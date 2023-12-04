@@ -5,7 +5,6 @@ import ServiceSelection, { ServiceDataItem } from "./ServiceSelection";
 import ServiceForm, { VehicleData } from "./AddVechicleForm";
 import { Button, Divider, Steps, notification } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
-// import PopUp from "../ProfilePage/PopUp";
 import SavedVechicleList from "./SavedVechicleList";
 import {
   useActivateSubscriptionMutation,
@@ -16,7 +15,7 @@ import { getUser } from "../../../../../constants/constants";
 import UpdateVehicleForm from "./UpdateVehicleForm";
 
 // this is the structure of PackageContent obj
-interface PackageContent {
+export type PackageContent = {
   id: number;
   heading: string;
   content1: string;
@@ -24,7 +23,7 @@ interface PackageContent {
   content3?: string; // if we use ? (optional) means data is undefined initially for content3
   price: number;
   btnName: string;
-}
+};
 
 export interface ServiceDataObj {
   mid: number;
@@ -130,13 +129,13 @@ const PaymentPage: React.FC = () => {
       inputData.forEach(async (data) => {
         try {
           if (data !== null) {
-            // const res = await activateSubscription(data);
-            // if ("data" in res) {
-            notification.success({
-              message: "Success",
-              description: "Service Activated Successfully",
-            });
-            // }
+            const res = await activateSubscription(data);
+            if ("data" in res) {
+              notification.success({
+                message: "Success",
+                description: "Service Activated Successfully",
+              });
+            }
           }
         } catch (apiError) {
           console.error("Error activating subscription:", apiError);

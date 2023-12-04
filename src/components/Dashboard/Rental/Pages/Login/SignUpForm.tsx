@@ -1,4 +1,12 @@
-import { Button, Checkbox, Divider, Form, Input, Select, notification } from "antd";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  Select,
+  notification,
+} from "antd";
 import { Col, Row, Typography } from "antd";
 import CustomSignUpFormItem, {
   SignUpInputData,
@@ -16,7 +24,7 @@ import vehicle from "../../../../../assets/vehicle.png";
 import { Link } from "react-router-dom";
 // import axios from "axios";
 
-export interface CityData {
+export type CityData = {
   country_code: string;
   country_id: number;
   country_name: string;
@@ -28,9 +36,9 @@ export interface CityData {
   state_id: number;
   state_name: string;
   wikidataid: string;
-}
+};
 
-export interface StateData {
+export type StateData = {
   country_code: string;
   country_id: number;
   country_name: string;
@@ -40,9 +48,9 @@ export interface StateData {
   name: string;
   state_code: string;
   type: string;
-}
+};
 
-export interface CountryData {
+export type CountryData = {
   capital: string;
   currency: string;
   currency_name: string;
@@ -65,7 +73,7 @@ export interface CountryData {
   subregion_id: number;
   timezones: string; // Note: It's a string, consider parsing it into an array of objects if needed
   tld: string;
-}
+};
 
 const SignUpForm = () => {
   const [showAddressDetails, setShowAddressDetails] = useState(false);
@@ -220,14 +228,14 @@ const SignUpForm = () => {
       setTermsError("terms and conditions is not selected");
       notification.success({
         message: "Error",
-        description:"terms and conditions is not selected!"
+        description: "terms and conditions is not selected!",
       });
     } else {
-      // await signUpRequest(formData);
+      await signUpRequest(formData);
       setIsFormSubmitted(true);
       notification.success({
         message: "Success",
-        description:"Your details submitted successfully!"
+        description: "Your details submitted successfully!",
       });
 
       // const username = "praveen";
@@ -247,23 +255,23 @@ const SignUpForm = () => {
       // const response = await axios.post(apiUrl, formData, {headers});
       // console.log(response);
 
-    //   const myHeaders = new Headers();
-    //   myHeaders.append("Content-Type", "application/json");
-    //   myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+      //   const myHeaders = new Headers();
+      //   myHeaders.append("Content-Type", "application/json");
+      //   myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
 
-    //   const raw = JSON.stringify(formData);
+      //   const raw = JSON.stringify(formData);
 
-    //   const requestOptions = {
-    //     method: "POST",
-    //     headers: myHeaders,
-    //     body: raw,
-    //   };
+      //   const requestOptions = {
+      //     method: "POST",
+      //     headers: myHeaders,
+      //     body: raw,
+      //   };
 
-    //   fetch("https://api.teckiko.com/gord/insert", requestOptions)
-    //     .then((response) => response.text())
-    //     .then((result) => console.log(result))
-    //     .catch((error) => console.log("error", error));
-    // }
+      //   fetch("https://api.teckiko.com/gord/insert", requestOptions)
+      //     .then((response) => response.text())
+      //     .then((result) => console.log(result))
+      //     .catch((error) => console.log("error", error));
+      // }
     }
   };
 
@@ -325,7 +333,7 @@ const SignUpForm = () => {
           <Row>
             <Col className="flex justify-left items-center" span={16}>
               <Typography className="ml-8 italic mt-10 md:mt-2  text-white text-2xl font-extrabold">
-                RoadWays Info Services
+                RoadWays Services
               </Typography>
             </Col>
             <Col className="flex justify-center items-center" span={8}>
@@ -385,7 +393,7 @@ const SignUpForm = () => {
                   {!showAddressDetails && (
                     <div>
                       <p className="pb-2 pl-3 text-lg">
-                        Profile Details<span className="text-red-500">*</span> 
+                        Profile Details<span className="text-red-500">*</span>
                       </p>
                       <div className="md:flex">
                         <div className="flex flex-col">
@@ -734,7 +742,7 @@ const SignUpForm = () => {
 
                 <div className="flex text-black justify-end mt-4">
                   <Typography>Already have an account?</Typography>
-                  <Link to="http://localhost:8000/service-user-login">
+                  <Link to="/service-user-login">
                     <p className="pl-2 text-cyan-600">Login</p>
                   </Link>
                 </div>

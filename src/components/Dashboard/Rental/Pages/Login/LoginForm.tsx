@@ -3,12 +3,12 @@ import { Col, Divider, Typography, Button, Form, Input } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
-type FormValues = {
+export type FormValues = {
   mobile: string;
   password: string;
 };
 
-interface LoginProps {
+export type LoginProps = {
   handleLoginBtn: () => void;
   handleLoginChange: (_: FormValues, allValues: FormValues) => void;
   onFinish: (values: FormValues) => void;
@@ -40,7 +40,7 @@ const LoginForm: React.FC<LoginProps> = ({
                 onValuesChange={handleLoginChange}
               >
                 <Typography className="text-center my-2">
-                  Welcome to Roadways Info Services
+                  Welcome to Roadways Services
                 </Typography>
 
                 <div className="w-[230px] md:w-[300px] mt-4">
@@ -85,7 +85,7 @@ const LoginForm: React.FC<LoginProps> = ({
                   <a className="text-cyan-600">Forgot password?</a>
                   <div className="flex">
                     <p className="text-black">New User?</p>
-                    <Link to="http://localhost:8000/service-user-signup">
+                    <Link to="/service-user-signup">
                       <p className="pl-2 text-cyan-600">SignUp</p>
                     </Link>
                   </div>

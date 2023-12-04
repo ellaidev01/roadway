@@ -2,12 +2,12 @@ import { Button } from "antd";
 import React from "react";
 import { UserProfileObj } from "./ProfilePage";
 
-interface MyComponentProps {
+type ProfileCardProps = {
   handleEdit: () => void;
   userProfile: UserProfileObj[] | undefined;
 }
 
-const ProfileCard: React.FC<MyComponentProps> = ({
+const ProfileCard: React.FC<ProfileCardProps> = ({
   handleEdit,
   userProfile,
 }) => {

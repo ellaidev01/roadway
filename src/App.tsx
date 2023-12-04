@@ -17,7 +17,7 @@ import SignUpForm from "./components/Dashboard/Rental/Pages/Login/SignUpForm";
 import { setAuthorizationHeader } from "./store/reducer/userSlice";
 import { notification } from "antd";
 
-export interface InputData {
+export type AccessTokenPayload = {
   username: string;
   password: string;
   grant_type: string;
@@ -25,7 +25,7 @@ export interface InputData {
   client_secret: string;
 }
 
-export interface InputRefreshData {
+export type RefreshTokenPayload= {
   grant_type: string;
   client_id: string;
   client_secret: string;
@@ -60,7 +60,7 @@ function App() {
 
   const getEntryToken = async () => {
     try {
-      const inputData: InputData = {
+      const payLoad: AccessTokenPayload = {
         username: import.meta.env.VITE_USERNAME,
         password: import.meta.env.VITE_PASSWORD,
         grant_type: import.meta.env.VITE_GRANT_TYPE,
@@ -68,7 +68,7 @@ function App() {
         client_secret: import.meta.env.VITE_CLIENT_SECRET,
       };
 
-      const formDataQueryString = objectToQueryString(inputData);
+      const formDataQueryString = objectToQueryString(payLoad);
       const res = await getTokenMutation(formDataQueryString);
 
       if (
@@ -105,14 +105,14 @@ function App() {
         return;
       }
 
-      const inputData: InputRefreshData = {
+      const payLoad: RefreshTokenPayload = {
         grant_type: import.meta.env.VITE_CLIENT_TYPE_REFRESH_TOKEN,
         client_id: import.meta.env.VITE_CLIENT_ID,
         client_secret: import.meta.env.VITE_CLIENT_SECRET,
         refresh_token: storedRefreshToken,
       };
 
-      const formDataQueryString = objectToQueryString(inputData);
+      const formDataQueryString = objectToQueryString(payLoad);
       const res = await getRefreshTokenMutation(formDataQueryString);
 
       if (
@@ -167,7 +167,7 @@ function App() {
     <BrowserRouter>
       <div>
         <Routes>
-          {/* rental user */}
+          {/* service user */}
           <Route
             index
             path="/"
@@ -178,17 +178,8 @@ function App() {
               />
             }
           />
-          <Route
-            index
-            path="/service-user-login"
-            element={
-              <LoginSignupPage
-                setIsLoggedIn={setIsLoggedIn}
-                setUserType={setUserType}
-              />
-            }
-          />
-          <Route index path="/service-user-signup" element={<SignUpForm />} />
+   
+          <Route path="/service-user-signup" element={<SignUpForm />} />
 
           <Route
             path="/*"
@@ -196,7 +187,7 @@ function App() {
               isRentalUserLoggedIn ? (
                 <LayoutComponent setIsLoggedIn={setIsLoggedIn} />
               ) : (
-                <Navigate to="/service-user-login" replace={true} />
+                <Navigate to="/" replace={true} />
               )
             }
           />

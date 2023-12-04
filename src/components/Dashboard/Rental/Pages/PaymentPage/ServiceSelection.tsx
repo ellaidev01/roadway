@@ -6,20 +6,15 @@ import { ErrorBoundary } from "react-error-boundary";
 import LazyLoadImage from "../../Custom/LazyLoadImage.tsx"
 
 const { Search } = Input;
-// export interface ServiceDataItem {
-//   id: number;
-//   icon?: React.ReactNode;
-//   serviceName: string;
-// }
 
-export interface ServiceDataItem {
+export type ServiceDataItem = {
   mid: number;
   type: string;
   value: string;
   status: number;
 }
 
-interface ServiceSelectionProps {
+type ServiceSelectionProps = {
   handleServiceSelection?: (item: ServiceDataItem) => void | undefined;
   serviceData?: ServiceDataItem[];
   selectedService?: ServiceDataItem | null;

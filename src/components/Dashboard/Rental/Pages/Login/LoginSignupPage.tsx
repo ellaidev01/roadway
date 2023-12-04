@@ -23,7 +23,7 @@ import {
 // import { RootStateType } from "../../../../../store/store";
 import { Dispatch, SetStateAction } from "react";
 
-interface InputData {
+export type InputData = {
   username: string;
   password: string;
   grant_type: string;
@@ -31,17 +31,17 @@ interface InputData {
   client_secret: string;
 }
 
-type FormValues = {
+export type FormValues = {
   mobile: string;
   password: string;
 };
 
-interface loginProps {
+export type LoginSignUpProps  = {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
   setUserType: Dispatch<SetStateAction<string | null>>;
 }
 
-const LoginSignupPage: React.FC<loginProps> = ({
+const LoginSignupPage: React.FC<LoginSignUpProps> = ({
   setIsLoggedIn,
   setUserType,
 }) => {
@@ -67,7 +67,13 @@ const LoginSignupPage: React.FC<loginProps> = ({
     // },
   ] = useGetTokenMutation();
 
-  const login = async () => {
+  const handleLoginChange = (_: FormValues, allValues: FormValues) => {
+    const { mobile, password } = allValues;
+    setMobileNo(mobile);
+    setPassword(password);
+  };
+
+  const loginRequest = async () => {
     try {
       const token = localStorage.getItem("access_token");
       if (token && mobileNo.length === 10) {
@@ -138,15 +144,9 @@ const LoginSignupPage: React.FC<loginProps> = ({
       });
     }
   };
-
-  const handleLoginChange = (_: FormValues, allValues: FormValues) => {
-    const { mobile, password } = allValues;
-    setMobileNo(mobile);
-    setPassword(password);
-  };
-
+ 
   const onFinish = async () => {
-    await login();
+    await loginRequest();
   };
 
   const handleLoginBtn = () => {
@@ -161,7 +161,7 @@ const LoginSignupPage: React.FC<loginProps> = ({
             <Row>
               <Col className="flex justify-left items-center" span={16}>
                 <Typography className="ml-8 italic mt-10 md:mt-2  text-white text-2xl font-extrabold">
-                  RoadWays Info Services
+                  RoadWays Services
                 </Typography>
               </Col>
               <Col className="flex justify-center items-center" span={8}>

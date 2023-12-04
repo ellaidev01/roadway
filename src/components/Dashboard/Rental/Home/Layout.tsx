@@ -27,12 +27,12 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useLogoutMutation } from "../../../../services/configuration/loginApi/logoutApi";
 
-interface MenuItem {
+type MenuItem = {
   key: string;
   icon?: JSX.Element;
   label: string;
   children?: MenuItem[];
-}
+};
 
 function getItem(
   label: string,
@@ -75,7 +75,7 @@ interface layoutProps {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }
 
-export interface InputLogoutData {
+export interface LogoutPayLoad {
   client_id: string;
   client_secret: string;
   refresh_token: string | null;
@@ -135,21 +135,20 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
   const handleLogout = async () => {
     const storedRefreshToken = cookieToken(1);
 
-    const inputData: InputLogoutData = {
+    const payLoad: LogoutPayLoad = {
       client_id: import.meta.env.VITE_CLIENT_ID,
       client_secret: import.meta.env.VITE_CLIENT_SECRET,
       refresh_token: storedRefreshToken,
     };
 
-    const formDataQueryString = objectToQueryString(inputData);
+    const formDataQueryString = objectToQueryString(payLoad);
 
-    await logout(formDataQueryString).then(() => {
-      navigate("/service-user-login");
-      clearTokenCookie();
-      setIsLoggedIn(tokenAuthenticated(0));
-      localStorage.removeItem("user");
-      localStorage.removeItem("username");
-    });
+    await logout(formDataQueryString);
+    navigate("/");
+    clearTokenCookie();
+    setIsLoggedIn(tokenAuthenticated(0));
+    localStorage.removeItem("user");
+    localStorage.removeItem("username");
   };
 
   const handleNavigate = (id: number) => {
@@ -191,7 +190,7 @@ const LayoutComponent: React.FC<layoutProps> = ({ setIsLoggedIn }) => {
             )}
           </i>
           <p className="text-lg hidden md:block absolute top-4 md:top-3 ml-8  md:text-xl text-center font-semibold italic">
-            RoadWays Info Services
+            RoadWays Services
           </p>
 
           <i className="text-xl flex absolute top-4 md:top-4 md:right-20 right-12  cursor-pointer">

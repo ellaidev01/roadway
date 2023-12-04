@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Card } from "antd";
 
-interface PackageCardProps {
+type PackageCardProps = {
   item: {
     id: number;
     heading: string;

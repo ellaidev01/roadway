@@ -1,6 +1,6 @@
 import { Form, Input } from "antd";
 
-interface CustomLoginFormProps {
+type CustomLoginFormProps = {
   name: string;
   placeholder: string;
   required?: boolean;

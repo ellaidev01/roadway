@@ -18,19 +18,19 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 const { Search } = Input;
 
-interface vehicleBrand {
+export type vehicleBrand = {
   brandid: number;
   brandname: string;
-}
+};
 
-interface TableParams {
+export type TableParams = {
   pagination?: TablePaginationConfig;
   sortField?: string;
   sortOrder?: string;
   filters?: Record<string, FilterValue | null> | undefined; // Specify the type here
-}
+};
 
-interface ServiceSelectionProps {
+type ServiceSelectionProps = {
   isFormSubmitted: boolean;
   isAddVehicle: boolean;
   setIsAddVehicle: Dispatch<SetStateAction<boolean>>;
@@ -39,7 +39,7 @@ interface ServiceSelectionProps {
   selectedServiceId: number | undefined;
   handleUpdate: (record: VehicleData) => void;
   handleSelectedVehicleIds: (e: CheckboxChangeEvent, data: VehicleData) => void;
-}
+};
 
 // const generateMockData = (count: number): VehicleData[] => {
 //   const mockData: VehicleData[] = [];

@@ -1,7 +1,7 @@
 import { Skeleton } from "antd";
 import { ReactNode, Suspense } from "react";
 
-interface LazyLoadProps {
+type LazyLoadProps = {
   children: ReactNode;
 }
 

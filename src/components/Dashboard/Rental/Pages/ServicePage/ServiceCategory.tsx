@@ -6,14 +6,14 @@ import LazyLoadImage from "../../Custom/LazyLoadImage";
 
 const { Search } = Input;
 
-export interface ServiceDataItem {
+export type ServiceDataItem = {
   mid: number;
   type: string;
   value: string;
   status: number;
 }
 
-interface ServiceSelectionProps {
+type ServiceSelectionProps = {
   handleServiceSelection?: (item: ServiceDataItem) => void | undefined;
   serviceData?: ServiceDataItem[];
   selectedService?: ServiceDataItem | null;

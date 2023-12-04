@@ -21,13 +21,13 @@ import dayjs from "dayjs"; // Import dayjs library
 import customParseFormat from "dayjs/plugin/customParseFormat"; // Import the customParseFormat plugin
 dayjs.extend(customParseFormat); // Use the customParseFormat plugin
 
-interface MyComponentProps {
+type UpdateServiceVehicleProps = {
   handleCancel: () => void;
   selectedServiceId: number | undefined;
   selectedVehicleData: VehicleData | undefined;
 }
 
-const UpdateServiceVehicle: React.FC<MyComponentProps> = ({
+const UpdateServiceVehicle: React.FC<UpdateServiceVehicleProps> = ({
   handleCancel,
   selectedServiceId,
   selectedVehicleData,

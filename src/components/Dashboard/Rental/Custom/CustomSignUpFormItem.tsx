@@ -1,7 +1,7 @@
 import { Form, Input } from "antd";
 import { ChangeEvent } from "react";
 
-export interface SignUpInputData {
+export type SignUpInputData = {
   name: string;
   organization_name: string;
   email?: string;
@@ -17,7 +17,7 @@ export interface SignUpInputData {
   country: string;
 }
 
-interface CustomSignUpFormDataProps {
+type CustomSignUpFormDataProps = {
   name: string;
   placeholder: string;
   required?: boolean;

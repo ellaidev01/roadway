@@ -1,8 +1,8 @@
 import { Form, Input } from "antd";
-import { Vehicle_Data } from "../Pages/PaymentPage/AddVechicleForm";
+import { VehicleData } from "../Pages/PaymentPage/AddVechicleForm";
 
-interface CustomFormItemProps {
-  name: keyof Vehicle_Data;
+type CustomFormItemProps = {
+  name: keyof VehicleData;
   placeholder: string;
   required?: boolean;
   email?: boolean;

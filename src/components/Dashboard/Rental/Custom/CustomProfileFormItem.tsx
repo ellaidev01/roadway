@@ -1,7 +1,7 @@
 import { Form, Input } from "antd";
 import { ProfileFormData } from "../Pages/ProfilePage/ProfilePage";
 
-interface CustomFormDataProps {
+type CustomFormDataProps = {
   name: keyof ProfileFormData;
   placeholder: string;
   required?: boolean;
