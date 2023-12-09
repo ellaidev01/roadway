@@ -22,7 +22,7 @@ import {
 // import axios from "axios";
 import vehicle from "../../../../../assets/vehicle.png";
 import { Link } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 
 export type CityData = {
   country_code: string;
@@ -231,47 +231,47 @@ const SignUpForm = () => {
         description: "terms and conditions is not selected!",
       });
     } else {
-      await signUpRequest(formData);
+        // // await signUpRequest(formData);
+      const username = import.meta.env.VITE_SIGNUP_USERNAME;
+      const password = import.meta.env.VITE_SIGNUP_PASSWORD;
+
+      const credentials = `${username}:${password}`;
+      const base64Credentials = btoa(credentials);
+
+      const headers = {
+        "Content-Type": "application/json", // Adjust content type as needed
+        Authorization: `Basic ${base64Credentials}`,
+      };
+
+      const apiUrl = "https://api.teckiko.com/gord/insert";
+
+      // Make the POST request using Axios
+      const response = await axios.post(apiUrl, formData, { headers });
+      console.log(response);
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+
+      const raw = JSON.stringify(formData);
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+      };
+
+      fetch("https://api.teckiko.com/gord/insert", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
+
+    
       setIsFormSubmitted(true);
       notification.success({
         message: "Success",
         description: "Your details submitted successfully!",
       });
-
-      // const username = "praveen";
-      // const password = "kumar@123";
-
-      // const credentials = `${username}:${password}`;
-      // const base64Credentials = btoa(credentials);
-
-      // const headers = {
-      //   "Content-Type": "application/json", // Adjust content type as needed
-      //   Authorization: `Basic ${base64Credentials}`,
-      // };
-
-      // const apiUrl = "https://api.teckiko.com/gord/insert";
-
-      // // Make the POST request using Axios
-      // const response = await axios.post(apiUrl, formData, {headers});
-      // console.log(response);
-
-      //   const myHeaders = new Headers();
-      //   myHeaders.append("Content-Type", "application/json");
-      //   myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
-
-      //   const raw = JSON.stringify(formData);
-
-      //   const requestOptions = {
-      //     method: "POST",
-      //     headers: myHeaders,
-      //     body: raw,
-      //   };
-
-      //   fetch("https://api.teckiko.com/gord/insert", requestOptions)
-      //     .then((response) => response.text())
-      //     .then((result) => console.log(result))
-      //     .catch((error) => console.log("error", error));
-      // }
     }
   };
 

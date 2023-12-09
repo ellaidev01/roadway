@@ -30,7 +30,6 @@ export const signUpApi = tokenApiSlice.injectEndpoints({
       }),
       // providesTags: [],
     }),
-  
     signUp: builder.mutation({
       query: (inputData) => ({
         url: `/gord/insert`,
