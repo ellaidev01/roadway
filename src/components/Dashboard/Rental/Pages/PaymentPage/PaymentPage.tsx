@@ -5,7 +5,7 @@ import ServiceSelection, { ServiceDataItem } from "./ServiceSelection";
 import ServiceForm, { VehicleData } from "./AddVechicleForm";
 import { Button, Divider, Steps, notification } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
-import SavedVechicleList from "./SavedVechicleList";
+import SavedVehicleList from "./SavedVehicleList";
 import {
   useActivateSubscriptionMutation,
   useGetServiceTypeQuery,
@@ -189,7 +189,7 @@ const PaymentPage: React.FC = () => {
           !isVehicleItemSelected &&
           !isUpdate && (
             <>
-              <SavedVechicleList
+              <SavedVehicleList
                 isAddVehicle={isAddVehicle}
                 setIsAddVehicle={setIsAddVehicle}
                 isServiceSelected={isServiceSelected}
@@ -200,7 +200,11 @@ const PaymentPage: React.FC = () => {
                 isFormSubmitted={isFormSubmitted}
               />
               <div className="flex justify-end mt-2">
-                <Button onClick={handleItemSelected} className="color-btn ">
+                <Button
+                  disabled={selectedVehicleIds?.length ? false : true}
+                  onClick={handleItemSelected}
+                  className="color-btn "
+                >
                   Next
                 </Button>
               </div>

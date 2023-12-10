@@ -68,7 +68,7 @@ type ServiceSelectionProps = {
 //   { id: 3, icon: <span>🚕</span>, serviceName: "Car Service/ Water wash" },
 // ];
 
-const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
+const SavedVehicleList: React.FC<ServiceSelectionProps> = ({
   isAddVehicle,
   setIsAddVehicle,
   isServiceSelected,
@@ -242,4 +242,4 @@ const SavedVechicleList: React.FC<ServiceSelectionProps> = ({
   );
 };
 
-export default SavedVechicleList;
+export default SavedVehicleList;

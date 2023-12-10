@@ -163,13 +163,14 @@ const ServiceForm: React.FC<FormProps> = ({
   };
 
   const handleSubmit = async () => {
+    try{
     const userId = getUser()?.toLowerCase();
-    const now = new Date();
-    const day = now.getDate().toString().padStart(2, "0"); // padStart is used to add 0 at starting of string when string contain single number.
-    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based, 0 - jan
-    const year = now.getFullYear() + 1;
+    // const now = new Date();
+    // const day = now.getDate().toString().padStart(2, "0"); // padStart is used to add 0 at starting of string when string contain single number.
+    // const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based, 0 - jan
+    // const year = now.getFullYear() + 1;
 
-    const formattedDate = `${year}-${month}-${day}`;
+    // const formattedDate = `${year}-${month}-${day}`;
 
     const payload = {
       ...vehicleFormData,
@@ -183,10 +184,10 @@ const ServiceForm: React.FC<FormProps> = ({
       vimg1: "",
       vimg2: "",
       vimg3: "",
-      vvalidity: formattedDate, // need to ask
+      vvalidity: null, // need to ask
       visactive: 0,
       vmobile: mobileNumber,
-      vtons: Number(vehicleFormData?.vtons) || 0,
+      vtons: Number(vehicleFormData?.vtons) || null,
     };
     console.log(payload);
 
@@ -200,6 +201,14 @@ const ServiceForm: React.FC<FormProps> = ({
         description: "Vehicle details submitted successfully!",
       });
     }
+  }catch(err){
+    if(err){
+      notification.error({
+        message: "Vehicle Registration Failed!",
+        description: "There is an error while registering vehicle",
+      });
+    }
+  }
   };
 
   const handleCancel = () => {
@@ -373,7 +382,7 @@ const ServiceForm: React.FC<FormProps> = ({
                 </div>
                 <div className="flex flex-col">
                   <label htmlFor="vtyres" className="ml-5 text-gray-500">
-                    Vehicle Total Tyres<span className="text-red-500">*</span>
+                    Vehicle Total Tyers<span className="text-red-500">*</span>
                   </label>
                   <CustomVehicleFormItem
                     name="vtyres"

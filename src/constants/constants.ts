@@ -103,3 +103,8 @@ export const objectToQueryString = (obj:any) => {
 }
 
 
+export const signup_username = import.meta.env.VITE_SIGNUP_USERNAME;
+export const signup_password = import.meta.env.VITE_SIGNUP_PASSWORD;
+
+const credentials = `${signup_username}:${signup_password}`;
+export const base64Credentials = btoa(credentials);

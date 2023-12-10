@@ -21,8 +21,13 @@ import {
 } from "../../../../../services/configuration/signupApi/signUpApi";
 // import axios from "axios";
 import vehicle from "../../../../../assets/vehicle.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  base64Credentials,
+  signup_password,
+  signup_username,
+} from "../../../../../constants/constants";
 
 export type CityData = {
   country_code: string;
@@ -129,6 +134,8 @@ const SignUpForm = () => {
     // { isError: isSignUpError, isLoading: isSignUpLoading, error: SignUpError },
   ] = useSignUpMutation();
 
+  const navigate = useNavigate();
+
   const handleMobileNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
     // Get the input value
     let inputValue: string = e.target.value;
@@ -202,75 +209,57 @@ const SignUpForm = () => {
   };
 
   const onFinish = async () => {
-    const userType = userTypesResData[1]?.value;
+    try {
+      const userType = userTypesResData[1]?.value;
 
-    const formData = {
-      name: signUpFormData?.name,
-      mobile_no: mobileNumber,
-      email: signUpFormData?.email,
-      addr: `${signUpFormData?.door_no},${signUpFormData?.street_name},${signUpFormData?.landmark}`,
-      city: signUpFormData?.city,
-      state: signUpFormData?.state,
-      country: signUpFormData?.country,
-      password: signUpFormData?.password,
-      usertype: userType,
-      latitude: "",
-      longitude: "",
-      idtype: signUpFormData?.idtype,
-      idnumber: signUpFormData?.idnumber,
-      idfile: "",
-      // organization_name: signUpFormData?.organization_name,
-    };
-
-    console.log(formData);
-
-    if (!isTermsSelected) {
-      setTermsError("terms and conditions is not selected");
-      notification.success({
-        message: "Error",
-        description: "terms and conditions is not selected!",
-      });
-    } else {
-        // // await signUpRequest(formData);
-      const username = import.meta.env.VITE_SIGNUP_USERNAME;
-      const password = import.meta.env.VITE_SIGNUP_PASSWORD;
-
-      const credentials = `${username}:${password}`;
-      const base64Credentials = btoa(credentials);
-
-      const headers = {
-        "Content-Type": "application/json", // Adjust content type as needed
-        Authorization: `Basic ${base64Credentials}`,
+      const formData = {
+        name: signUpFormData?.name,
+        mobile_no: mobileNumber,
+        email: signUpFormData?.email,
+        addr: `${signUpFormData?.door_no},${signUpFormData?.street_name},${signUpFormData?.landmark}`,
+        city: signUpFormData?.city,
+        state: signUpFormData?.state,
+        country: signUpFormData?.country,
+        password: signUpFormData?.password,
+        usertype: userType,
+        latitude: "",
+        longitude: "",
+        idtype: signUpFormData?.idtype,
+        idnumber: signUpFormData?.idnumber,
+        idfile: "",
+        // organization_name: signUpFormData?.organization_name,
       };
 
-      const apiUrl = "https://api.teckiko.com/gord/insert";
+      console.log(formData);
 
-      // Make the POST request using Axios
-      const response = await axios.post(apiUrl, formData, { headers });
-      console.log(response);
+      if (!isTermsSelected) {
+        setTermsError("terms and conditions is not selected");
+        notification.success({
+          message: "Error",
+          description: "terms and conditions is not selected!",
+        });
+      } else {
+        const headers = {
+          "Content-Type": "application/json", // Adjust content type as needed
+          Authorization: `Basic ${base64Credentials}`,
+        };
 
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+        const apiUrl = "https://api.teckiko.com/gord/insert";
 
-      const raw = JSON.stringify(formData);
+        const response = await axios.post(apiUrl, formData, { headers });
 
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-      };
-
-      fetch("https://api.teckiko.com/gord/insert", requestOptions)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.log("error", error));
-
-    
-      setIsFormSubmitted(true);
+        if (response.status === 200) {
+          setIsFormSubmitted(true);
+          notification.success({
+            message: response?.data,
+            description: "Your details submitted successfully!",
+          });
+        }
+      }
+    } catch (err) {
       notification.success({
-        message: "Success",
-        description: "Your details submitted successfully!",
+        message: "Not Success",
+        description: "Awe! there is an error while registration",
       });
     }
   };
@@ -293,36 +282,45 @@ const SignUpForm = () => {
     setOtp(inputValue);
   };
 
-  const handleOtpSubmit = () => {
-    if (!otp) {
-      setOtpError("Please Enter Received OTP ");
-    }
+  const handleOtpSubmit = async () => {
+    try {
+      if (!otp) {
+        setOtpError("Please Enter Received OTP ");
+      }
 
-    if (otp?.length && otp.length < 6) {
-      setOtpError("OTP should be of minimum 6 digits");
-    }
+      if (otp?.length && otp.length < 6) {
+        setOtpError("OTP should be of minimum 6 digits");
+      }
 
-    if (otp && otp?.length) {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      myHeaders.append("Authorization", "Basic cHJhdmVlbjprdW1hckAxMjM=");
+      if (otp && otp?.length) {
+        const headers = {
+          "Content-Type": "application/json", // Adjust content type as needed
+          Authorization: `Basic ${base64Credentials}`,
+        };
 
-      const raw = JSON.stringify({
-        mobile: mobileNumber,
-        email: signUpFormData?.email,
-        otp: otp,
+        const apiUrl = "https://api.teckiko.com/gord/verifyotp";
+        const formData = {
+          mobile: mobileNumber,
+          email: signUpFormData?.email,
+          otp: otp,
+        };
+        
+        const response = await axios.post(apiUrl, formData, { headers });
+
+        console.log(response);
+        
+        if (response.status === 200) {
+          notification.success({
+            message: "OTP verified successfully!",
+          });
+          navigate("/");
+        }
+      }
+    } catch (err) {
+      notification.error({
+        message: "Check your OTP",
+        description: "OTP verification Failed",
       });
-
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-      };
-
-      fetch("https://api.teckiko.com/gord/verifyotp", requestOptions)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.log("error", error));
     }
   };
 
@@ -724,6 +722,7 @@ const SignUpForm = () => {
                             value={otp}
                             onChange={handleOtpChange}
                           />
+                          <p className="ml-3 mt-2 text-blue-600">Resend OTP</p>
                           <p className="text-red-500 ml-3">
                             {otpError && otpError}
                           </p>
