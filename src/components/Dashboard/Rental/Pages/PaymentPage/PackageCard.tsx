@@ -12,15 +12,15 @@ type PackageCardProps = {
     btnName: string;
   };
 
-  handleSelectPackage?: (packageName: string) => void | undefined;
+  handleSelectPackage: () => void ;
   selectedVechicleIds: number[];
   handleSubscription: () => void
 }
 
 const PackageCard: React.FC<PackageCardProps> = ({
   item,
-  handleSelectPackage,
   selectedVechicleIds,
+  handleSelectPackage,
   handleSubscription
 }) => {
 
@@ -50,7 +50,7 @@ const PackageCard: React.FC<PackageCardProps> = ({
             <Button
               className="mt-10 text-white border-none flex justify-center items-center w-full font-semibold color-btn"
               onClick={() => {
-                handleSelectPackage?.(item.heading)
+                handleSelectPackage();
                 handleSubscription();
               }}
             >

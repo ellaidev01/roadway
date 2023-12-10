@@ -20,6 +20,7 @@ import type { DatePickerProps } from "antd";
 import { getUser } from "../../../../../constants/constants";
 
 export type VehicleData = {
+  vid:number,
   vtype: number;
   vmodel: number;
   vbrand: number;
@@ -189,8 +190,7 @@ const ServiceForm: React.FC<FormProps> = ({
       vmobile: mobileNumber,
       vtons: Number(vehicleFormData?.vtons) || null,
     };
-    console.log(payload);
-
+  
     if (selectedServiceId && userId && mobileNumber) {
       await addVehicle(payload);
       form.resetFields();

@@ -37,6 +37,7 @@ type ServiceSelectionProps = {
   isServiceSelected: boolean;
   setIsServiceSelected: Dispatch<SetStateAction<boolean>>;
   selectedServiceId: number | undefined;
+  selectedVehicleIds: number[];
   handleUpdate: (record: VehicleData) => void;
   handleSelectedVehicleIds: (e: CheckboxChangeEvent, data: VehicleData) => void;
 };
@@ -77,8 +78,12 @@ const SavedVehicleList: React.FC<ServiceSelectionProps> = ({
   handleUpdate,
   handleSelectedVehicleIds,
   isFormSubmitted,
+  selectedVehicleIds,
 }) => {
   // const [pageData, setPageData] = useState<VehicleData[]>();
+
+  console.log(selectedVehicleIds);
+  
   const columns: ColumnsType<VehicleData> = [
     {
       title: "Vehicle Number",
@@ -141,10 +146,12 @@ const SavedVehicleList: React.FC<ServiceSelectionProps> = ({
       dataIndex: "checkbox",
       render: (_, record) => (
         <Checkbox
+          checked={selectedVehicleIds?.includes(record?.vid)}
           onChange={(e) => {
             handleSelectedVehicleIds(e, record);
           }}
         />
+        
       ),
     },
   ];
