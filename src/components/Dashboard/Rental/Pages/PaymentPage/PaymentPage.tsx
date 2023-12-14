@@ -126,19 +126,17 @@ const PaymentPage: React.FC = () => {
         p_gst: 180,
       }));
 
-      console.log(inputData);
-
       // Using forEach to iterate through inputData array
       inputData.forEach(async (data) => {
         try {
           if (data !== null) {
-            // const res = await activateSubscription(data);
-            // if ("data" in res) {
+            const res = await activateSubscription(data);
+            if ("data" in res) {
               notification.success({
                 message: "Success",
                 description: "Service Activated Successfully",
               });
-            // }
+            }
           }
         } catch (apiError) {
           console.error("Error activating subscription:", apiError);
