@@ -1,6 +1,6 @@
-import { Input, Skeleton } from "antd";
+import { Input, Skeleton, Button } from "antd";
 import { getIcon } from "../../../../../helpers/utilities/icons";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction,  } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import LazyLoadImage from "../../Custom/LazyLoadImage";
 
@@ -11,16 +11,17 @@ export type ServiceDataItem = {
   type: string;
   value: string;
   status: number;
-}
+};
 
 type ServiceSelectionProps = {
   handleServiceSelection?: (item: ServiceDataItem) => void | undefined;
   serviceData?: ServiceDataItem[];
   selectedService?: ServiceDataItem | null;
-  isServiceTypeLoading:boolean;
+  isServiceTypeLoading: boolean;
   searchTerm: string;
   setSearchTerm: Dispatch<SetStateAction<string>>;
-}
+  handleClickAll: () => void;
+};
 
 const ServiceCategory: React.FC<ServiceSelectionProps> = ({
   handleServiceSelection,
@@ -28,8 +29,10 @@ const ServiceCategory: React.FC<ServiceSelectionProps> = ({
   selectedService,
   isServiceTypeLoading,
   searchTerm,
-  setSearchTerm
+  setSearchTerm,
+  handleClickAll
 }) => {
+
   const onServiceItemClick = (item: ServiceDataItem) => {
     if (handleServiceSelection) {
       handleServiceSelection(item);
@@ -44,6 +47,9 @@ const ServiceCategory: React.FC<ServiceSelectionProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <Button onClick={handleClickAll} className="color-btn rounded-md ml-3 m-0 px-3 ">
+          All Service List
+        </Button>
       </div>
       {/* <h2 className="text-lg font-semibold text-center ">Service List</h2> */}
 
@@ -67,7 +73,7 @@ const ServiceCategory: React.FC<ServiceSelectionProps> = ({
             ) : (
               <>
                 <div className="w-[120px] h-[50px] flex flex-col justify-center items-center">
-                <ErrorBoundary fallback={<div>Error loading component!</div>}>
+                  <ErrorBoundary fallback={<div>Error loading component!</div>}>
                     <LazyLoadImage>
                       <img
                         src={getIcon(index)}
@@ -85,6 +91,7 @@ const ServiceCategory: React.FC<ServiceSelectionProps> = ({
           </div>
         ))}
       </div>
+
     </>
   );
 };

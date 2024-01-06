@@ -23,14 +23,14 @@ const { Search } = Input;
 export type vehicleBrand = {
   brandid: number;
   brandname: string;
-}
+};
 
 export type TableParams = {
   pagination?: TablePaginationConfig;
   sortField?: string;
   sortOrder?: string;
   filters?: Record<string, FilterValue | null> | undefined; // Specify the type here
-}
+};
 
 // const generateMockData = (count: number): VehicleData[] => {
 //   const mockData: VehicleData[] = [];
@@ -59,7 +59,7 @@ export type TableParams = {
 //   { id: 3, icon: <span>🚕</span>, serviceName: "Car Service/ Water wash" },
 // ];
 
-const SavedVechicleList = () => {
+const ServiceList = () => {
   // const [pageData, setPageData] = useState<VehicleData[]>();
   const [isServiceSelected, setIsServiceSelected] = useState<boolean>(false);
   const [selectedService, setSelectedService] = useState<ServiceDataObj | null>(
@@ -69,6 +69,7 @@ const SavedVechicleList = () => {
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [searchResult, setSearchResult] = useState<ServiceDataItem>();
+  const [isAllServices, setIsAllServices] = useState<boolean>(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       current: 1,
@@ -196,6 +197,10 @@ const SavedVechicleList = () => {
     setIsUpdate(!isUpdate);
   };
 
+  const handleClickAll = () => {
+    setIsAllServices(true);
+  };
+
   const handleRemove = () => {};
 
   useEffect(() => {
@@ -211,11 +216,7 @@ const SavedVechicleList = () => {
 
   return (
     <>
-      {isVehicleError && <div> Error Fetching Vehicle Data</div>}
-      {isVehicleBrandError && <div> Error Fetching Vehicle Brand</div>}
-      {isServiceTypeError && <div> Error Fetching ServiceType</div>}
-
-      {!isServiceSelected && !isUpdate && (
+      {!isServiceSelected && !isUpdate && !isAllServices && (
         <div>
           <ServiceCategory
             serviceData={searchResult || serviceTypeResData}
@@ -223,10 +224,11 @@ const SavedVechicleList = () => {
             isServiceTypeLoading={isServiceTypeLoading}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
+            handleClickAll={handleClickAll}
           />
         </div>
       )}
-      {isServiceSelected && !isUpdate && (
+      {isServiceSelected && !isUpdate && !isAllServices && (
         <>
           <div className="md:flex space-y-2 md:space-y-0 justify-between ">
             <div>
@@ -240,6 +242,7 @@ const SavedVechicleList = () => {
               className="md:w-[300px] w-full "
             />
           </div>
+
           <div className="rounded-md md:border mt-2">
             <div className="table-container overflow-x-auto">
               {isVehicleLoading ||
@@ -275,6 +278,36 @@ const SavedVechicleList = () => {
           </div>
         </>
       )}
+      {isVehicleError && isVehicleBrandError && isServiceTypeError && (
+        <p className="text-center mt-7">Error Fetching data. please check your network.</p>
+      )}
+
+      {isAllServices && !isServiceSelected && (
+        <>
+          <LeftCircleOutlined
+            onClick={() => setIsAllServices(false)}
+            className="text-xl md:mx-4 mr-3 text-cyan-600"
+          />
+          <Table
+            columns={columns}
+            rowKey="vid"
+            dataSource={vehicleResData}
+            pagination={tableParams.pagination}
+            scroll={{ x: true }} // Make the table scrollable in x-direction
+            onChange={(
+              pagination,
+              filters: Record<string, FilterValue | null>,
+              sorter
+            ) => {
+              setTableParams({
+                pagination,
+                filters,
+                ...sorter,
+              });
+            }}
+          />
+        </>
+      )}
 
       {isServiceSelected && isUpdate && (
         <div>
@@ -289,4 +322,4 @@ const SavedVechicleList = () => {
   );
 };
 
-export default SavedVechicleList;
+export default ServiceList;

@@ -73,6 +73,7 @@ const ProfilePage: React.FC = () => {
   const [initialFormValues, setInitialFormValues] = useState({});
   const [addresses, setAddresses] = useState<string[]>([]);
   // const [urls, setURLs] = useState<string[]>([]);
+  const [userData, setUserData] = useState();
   const [selectedCountryCode, setSelectedCountryCode] = useState<string | null>(
     null
   );
@@ -110,6 +111,7 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const profile = getLoginUserProfile();
+    setUserData(profile);
     profile?.map((user: UserProfileObj) => {
       const address = user.address.split(",");
 
@@ -214,27 +216,19 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-      {isCountriesError && (
-        <div className="text-sm text-red-500">Error Fetching Countries</div>
-      )}
-      {isStatesError && (
-        <div className="text-sm text-red-500">Error Fetching States</div>
-      )}
-      {isCitiesError && (
-        <div className="text-sm text-red-500">Error Fetching Cities</div>
-      )}
       <div className="overflow-hidden">
         {!edit &&
           !isUserLoading &&
           !isCitiesLoading &&
           !isCountriesLoading &&
           !isStatesLoading && (
-            <div>
-              <ProfileCard
-                handleEdit={handleEdit}
-                userProfile={getLoginUserProfile()}
-              />
-            </div>
+            <ProfileCard
+              handleEdit={handleEdit}
+              userProfile={userData}
+              isCountriesError={isCountriesError}
+              isStatesError={isStatesError}
+              isCitiesError={isCitiesError}
+            />
           )}
         {!edit && isUserLoading && <Skeleton paragraph={{ rows: 7 }} />}
 

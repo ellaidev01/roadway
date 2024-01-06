@@ -20,7 +20,7 @@ import type { DatePickerProps } from "antd";
 import { getUser } from "../../../../../constants/constants";
 
 export type VehicleData = {
-  vid:number,
+  vid: number;
   vtype: number;
   vmodel: number;
   vbrand: number;
@@ -43,6 +43,7 @@ export type VehicleData = {
   visactive: number;
   vuserid: string;
   vsrvcid: number;
+  vothertype: string;
 };
 
 export type vehicleTypeData = {
@@ -164,51 +165,51 @@ const ServiceForm: React.FC<FormProps> = ({
   };
 
   const handleSubmit = async () => {
-    try{
-    const userId = getUser()?.toLowerCase();
-    // const now = new Date();
-    // const day = now.getDate().toString().padStart(2, "0"); // padStart is used to add 0 at starting of string when string contain single number.
-    // const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based, 0 - jan
-    // const year = now.getFullYear() + 1;
+    try {
+      const userId = getUser()?.toLowerCase();
+      // const now = new Date();
+      // const day = now.getDate().toString().padStart(2, "0"); // padStart is used to add 0 at starting of string when string contain single number.
+      // const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Note: Months are zero-based, 0 - jan
+      // const year = now.getFullYear() + 1;
 
-    // const formattedDate = `${year}-${month}-${day}`;
+      // const formattedDate = `${year}-${month}-${day}`;
 
-    const payload = {
-      ...vehicleFormData,
-      vfcdate: fcDate,
-      vinsdate: insDate,
-      vuserid: userId,
-      vsrvcid: selectedServiceId,
-      vrcfile: null,
-      vinsfile: null,
-      votherfile: null,
-      vimg1: "",
-      vimg2: "",
-      vimg3: "",
-      vvalidity: null, // need to ask
-      visactive: 0,
-      vmobile: mobileNumber,
-      vtons: Number(vehicleFormData?.vtons) || null,
-    };
-  
-    if (selectedServiceId && userId && mobileNumber) {
-      await addVehicle(payload);
-      form.resetFields();
-      setIsAddVehicle(!isAddVehicle);
-      setIsFormSubmitted(true);
-      notification.success({
-        message: "Success",
-        description: "Vehicle details submitted successfully!",
-      });
+      const payload = {
+        ...vehicleFormData,
+        vfcdate: fcDate,
+        vinsdate: insDate,
+        vuserid: userId,
+        vsrvcid: selectedServiceId,
+        vrcfile: null,
+        vinsfile: null,
+        votherfile: null,
+        vimg1: "",
+        vimg2: "",
+        vimg3: "",
+        vvalidity: null, // need to ask
+        visactive: 0,
+        vmobile: mobileNumber,
+        vtons: Number(vehicleFormData?.vtons) || null,
+      };
+
+      if (selectedServiceId && userId && mobileNumber) {
+        await addVehicle(payload);
+        form.resetFields();
+        setIsAddVehicle(!isAddVehicle);
+        setIsFormSubmitted(true);
+        notification.success({
+          message: "Success",
+          description: "Vehicle details submitted successfully!",
+        });
+      }
+    } catch (err) {
+      if (err) {
+        notification.error({
+          message: "Vehicle Registration Failed!",
+          description: "There is an error while registering vehicle",
+        });
+      }
     }
-  }catch(err){
-    if(err){
-      notification.error({
-        message: "Vehicle Registration Failed!",
-        description: "There is an error while registering vehicle",
-      });
-    }
-  }
   };
 
   const handleCancel = () => {
@@ -236,7 +237,7 @@ const ServiceForm: React.FC<FormProps> = ({
               <div className="flex w-full mx-2 flex-wrap">
                 <div className="flex flex-col mb-3 ml-3 md:ml-0">
                   <label htmlFor="vmobile" className="ml-3 text-gray-500">
-                    Vehicle Mobile No<span className="text-red-500">*</span>
+                    Vehicle WhatsApp No<span className="text-red-500">*</span>
                   </label>
                   <Input
                     size="large"
@@ -282,6 +283,18 @@ const ServiceForm: React.FC<FormProps> = ({
                     </Select>
                   </Form.Item>
                 </div>
+                {vehicleFormData?.vtype === 9 ? (
+                  <div className="flex flex-col">
+                    <label htmlFor="vothertype" className="ml-5 text-gray-500">
+                      Other Vehicle Type<span className="text-red-500">*</span>
+                    </label>
+                    <CustomVehicleFormItem
+                      placeholder="Enter Other Vehicle Type"
+                      required
+                      name="vothertype"
+                    />
+                  </div>
+                ) : null}
                 <div className="flex flex-col">
                   <label htmlFor="vbrand" className="ml-5 text-gray-500">
                     Brand Name<span className="text-red-500">*</span>

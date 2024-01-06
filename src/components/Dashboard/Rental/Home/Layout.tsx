@@ -49,14 +49,14 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Service Vehicle List", "1", <TableOutlined />),
-  getItem("Add Vehicle", "2", <SisternodeOutlined />),
   getItem("Profile", "3", <UserOutlined />),
+  getItem("Active Service List", "1", <TableOutlined />),
+  getItem("Add Vehicle", "2", <SisternodeOutlined />),
   getItem("Enquiry", "4", <PhoneOutlined />),
 ];
 
 const drawerMenuItem = [
-  { id: 1, label: "Vehicle List", icon: <TableOutlined /> },
+  { id: 1, label: "Active Service List", icon: <TableOutlined /> },
   { id: 2, label: "Add Vehicle", icon: <SisternodeOutlined /> },
   { id: 3, label: "Profile", icon: <UserOutlined /> },
   { id: 4, label: "Enquiry", icon: <PhoneOutlined /> },

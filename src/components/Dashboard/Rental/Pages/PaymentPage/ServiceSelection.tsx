@@ -3,7 +3,7 @@ import { getIcon } from "../../../../../helpers/utilities/icons";
 import { Dispatch, SetStateAction } from "react";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import LazyLoadImage from "../../Custom/LazyLoadImage.tsx"
+import LazyLoadImage from "../../Custom/LazyLoadImage.tsx";
 
 const { Search } = Input;
 
@@ -12,7 +12,7 @@ export type ServiceDataItem = {
   type: string;
   value: string;
   status: number;
-}
+};
 
 type ServiceSelectionProps = {
   handleServiceSelection?: (item: ServiceDataItem) => void | undefined;
@@ -21,7 +21,7 @@ type ServiceSelectionProps = {
   isServiceTypeLoading: boolean;
   searchTerm: string;
   setSearchTerm: Dispatch<SetStateAction<string>>;
-}
+};
 
 const ServiceSelection: React.FC<ServiceSelectionProps> = ({
   handleServiceSelection,
@@ -49,6 +49,11 @@ const ServiceSelection: React.FC<ServiceSelectionProps> = ({
       <h2 className="text-lg font-semibold text-center ">
         Select Vehicle Type
       </h2>
+      {!Array.isArray(serviceData) && (
+        <p className="text-center mt-7">
+          Error Fetching data. please check your network.
+        </p>
+      )}
       <div className="flex justify-center items-center flex-wrap">
         {serviceData?.map((item, index) => (
           <div
