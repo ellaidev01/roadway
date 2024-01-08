@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import PackageCard from "./PackageCard";
 // import PaymentSuccessMessage from "./SuccessMessage";
 import ServiceSelection, { ServiceDataItem } from "./ServiceSelection";
 import ServiceForm, { VehicleData } from "./AddVechicleForm";
-import { Button,Divider, Steps, notification, Alert } from "antd";
+import { Button, Divider, Steps, notification, Alert } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import SavedVehicleList from "./SavedVehicleList";
 import {
@@ -114,7 +114,13 @@ const PaymentPage: React.FC = () => {
     }
   };
 
-  const handleActivateSubscription = async () => {
+  // The useCallback hook in React is used to memoize functions,
+  // especially when passing functions as props to child components. 
+  // It helps prevent unnecessary re-creation of functions on each render,
+  // which can lead to unnecessary re-renders of child components.
+
+
+  const handleActivateSubscription = useCallback(async () => {
     try {
       const inputData = selectedVehicleIds.map((id) => ({
         p_custid: getUser()?.toLowerCase(),
@@ -145,7 +151,7 @@ const PaymentPage: React.FC = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [selectedVehicleIds, selectedServiceId, activateSubscription]);
 
   const handleUpdate = (record: VehicleData) => {
     setSelectedVehicleData(record);
@@ -160,19 +166,32 @@ const PaymentPage: React.FC = () => {
     setIsPackageSelected(true);
   };
 
-  useEffect(() => {
+  // useMemo is used to memoize the return value.
+  // in here search result is memoized. if the same input is given. the memoized value
+  // is returned. it saves memory. it prevents recalculation.
+
+  const searchOutput = useMemo(() => {
     if (searchTerm) {
-      const searchResult = serviceTypeResData?.filter((item: ServiceDataItem) =>
+      return serviceTypeResData?.filter((item: ServiceDataItem) =>
         item?.value.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setSearchResult(searchResult);
+    } else {
+      return serviceTypeResData;
+    }
+  }, [searchTerm, serviceTypeResData]);
+  // the memoized function only recalculate if any of the value in dependency array
+  // changes.
+
+  useEffect(() => {
+    if (searchTerm) {
+      setSearchResult(searchOutput);
     } else {
       setSearchResult(serviceTypeResData);
     }
   }, [searchTerm]);
 
   // console.log(selectedService?.mid);
-  console.log(isServiceSelected, isVehicleItemSelected, isPackageSelected);
+  // console.log(isServiceSelected, isVehicleItemSelected, isPackageSelected);
 
   return (
     <>
